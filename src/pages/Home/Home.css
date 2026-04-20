@@ -1,0 +1,4 @@
+.home-content { display:flex; gap:16px; align-items:flex-start; }
+.home-product-area { flex:1; }
+.search-notice { padding:14px 18px; margin-bottom:12px; font-size:14px; }
+@media (max-width: 880px) { .home-content { flex-direction:column; } }

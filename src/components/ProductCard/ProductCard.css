@@ -1,0 +1,13 @@
+.product-card { background:#fff; border:1px solid transparent; display:flex; flex-direction:column; transition:.2s ease; }
+.product-card:hover { transform:translateY(-2px); border-color: rgba(238,77,45,.35); box-shadow:0 8px 18px rgba(0,0,0,.08); }
+.product-thumb-wrap { position:relative; aspect-ratio:1/1; background:#fafafa; padding:16px; }
+.product-thumb { width:100%; height:100%; object-fit:contain; }
+.product-discount-badge { position:absolute; right:0; top:0; width:48px; background:#ffd839; color:var(--shopee-orange); text-align:center; padding:6px 4px; font-size:12px; font-weight:700; }
+.product-discount-badge span { display:block; color:#fff; margin-top:2px; font-size:10px; }
+.product-content { padding:12px; }
+.product-name { font-size:14px; font-weight:400; line-height:1.4; height:40px; overflow:hidden; margin:0 0 10px; }
+.product-price-row { display:flex; align-items:flex-end; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+.product-price { color:var(--shopee-orange); font-size:18px; font-weight:500; }
+.product-old-price { color:#999; font-size:13px; text-decoration:line-through; }
+.product-meta-row { display:flex; justify-content:space-between; gap:8px; font-size:12px; color:#757575; margin-bottom:8px; }
+.product-location { text-align:right; font-size:12px; color:#999; }
