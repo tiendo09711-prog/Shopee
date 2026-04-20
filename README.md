@@ -1,6 +1,6 @@
 # Shopee Clone Frontend
 
-Frontend dựng bằng React JSX + CSS, tách sẵn cấu trúc để nối NodeJS/Express/MongoDB sau này.
+Frontend dựng bằng React JSX + CSS
 
 ## Chạy dự án
 
@@ -14,13 +14,6 @@ npm run dev
 - Email: demo@gmail.com
 - Password: 123456
 
-## Cấu trúc chính
-
-- `src/pages`: các trang
-- `src/components`: các thành phần giao diện
-- `src/contexts`: auth/cart state
-- `src/services`: lớp service để sau này thay mock bằng API thật
-- `src/data`: dữ liệu mock
 - `src/utils`: hàm dùng chung
 
 ## Gợi ý nối backend sau này
