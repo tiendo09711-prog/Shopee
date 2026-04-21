@@ -26,11 +26,16 @@ body,
   min-height: 100%;
 }
 
+html {
+  overflow-y: auto;
+}
+
 body {
   margin: 0;
   font-family: 'Roboto', Arial, sans-serif;
   color: var(--text-main);
   background: var(--shopee-bg);
+  overflow-x: hidden;
 }
 
 a {
@@ -40,7 +45,8 @@ a {
 
 button,
 input,
-select {
+select,
+textarea {
   font-family: inherit;
 }
 
@@ -51,6 +57,10 @@ button {
 img {
   display: block;
   max-width: 100%;
+}
+
+main {
+  width: 100%;
 }
 
 .container {
@@ -125,5 +135,9 @@ img {
 @media (max-width: 768px) {
   .container {
     width: min(var(--container), calc(100% - 20px));
+  }
+
+  .page-spacing {
+    padding: 20px 0 40px;
   }
 }

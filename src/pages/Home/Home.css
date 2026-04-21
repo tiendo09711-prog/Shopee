@@ -53,12 +53,33 @@
   font-size: 14px;
 }
 
+.home-content {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.home-product-area {
+  min-width: 0;
+}
+
+.search-notice {
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  color: #555;
+}
+
 @media (max-width: 900px) {
   .home-highlight-row {
     grid-template-columns: 1fr;
   }
 
   .home-voucher-list {
+    grid-template-columns: 1fr;
+  }
+
+  .home-content {
     grid-template-columns: 1fr;
   }
 }
