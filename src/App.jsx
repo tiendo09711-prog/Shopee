@@ -4,6 +4,7 @@ import { LanguageProvider } from './contexts/LanguageContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { OrderProvider } from './contexts/OrderContext'
 import { WishlistProvider } from './contexts/WishlistContext'
+import ScrollToTop from './components/ScrollToTop/ScrollToTop'
 import AppRoutes from './routes/AppRoutes'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <WishlistProvider>
             <CartProvider>
               <OrderProvider>
+                <ScrollToTop />
                 <AppRoutes />
               </OrderProvider>
             </CartProvider>
