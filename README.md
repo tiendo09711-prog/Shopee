@@ -47,11 +47,6 @@ Tai khoan mac dinh:
 - Phone: `0123123123`
 - Address: `123123123123`
 
-Behavior hien tai:
-
-- Neu localStorage chua co user list thi frontend se tu seed tai khoan nay.
-- Key localStorage dang dung: `shopee_clone_users`
-
 ### 2. Seller demo account
 
 Nguon du lieu:
@@ -74,19 +69,9 @@ Identifier seller login dang chap nhan:
 - `demo@gmail.com`
 - `demo_shop`
 
-Behavior hien tai:
-
-- Neu localStorage chua co seller map thi frontend se tu seed seller demo cho user `u_demo`.
-- Key localStorage dang dung: `shopee_clone_sellers`
-- Seller demo da hoan tat onboarding: `onboardingCompleted = true`
-
 ### 3. Admin
 
 Admin hien la frontend mock dashboard:
-
-- Chua co auth/login mock rieng
-- Chua co user seed mac dinh
-- Muc tieu la hien thi giao dien quan tri va mock data de noi backend sau
 
 ## Goi Y Noi Backend
 
@@ -111,21 +96,3 @@ Co the map backend vao:
 - `seller/src/data/sellerOrders.mock.js`
 
 ### Admin
-
-Admin hien chua dung API that, co the noi dan tu:
-
-- dashboard summary
-- moderation queue
-- system health
-- regional traffic
-
-## Ghi Chu Repo
-
-- `.gitignore` o root dung de chan toan repo:
-  - `node_modules/`
-  - `.env`, `.env.*`
-  - `dist/`
-  - `*.log`
-  - `nodemon.json`
-- Moi app hien co `public` rieng hoan toan.
-- Moi app hien co `dist` rieng hoan toan.
