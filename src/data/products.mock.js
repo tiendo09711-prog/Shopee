@@ -4,6 +4,42 @@ function timeOffset(daysAgo) {
   return now - daysAgo * 24 * 60 * 60 * 1000
 }
 
+function review(author, rating, content, daysAgo, images = []) {
+  return {
+    id: `${author.toLowerCase().replace(/\s+/g, '_')}_${daysAgo}`,
+    author,
+    rating,
+    content,
+    createdAt: timeOffset(daysAgo),
+    images
+  }
+}
+
+function shop(id, name, joinedYear, responseRate, followers, rating) {
+  return {
+    id,
+    name,
+    joinedYear,
+    responseRate,
+    responseTime: 'trong vài phút',
+    followers,
+    rating,
+    productsCount: 0,
+    location: 'TP. Hồ Chí Minh',
+    avatar: '',
+    isMall: true
+  }
+}
+
+export const shops = [
+  shop('shop_apple', 'Apple Flagship Store', 2020, 98, 245000, 4.9),
+  shop('shop_samsung', 'Samsung Official', 2019, 97, 198000, 4.8),
+  shop('shop_xiaomi', 'Xiaomi Digital', 2021, 95, 123000, 4.7),
+  shop('shop_fashion', 'Street Fashion Hub', 2022, 96, 88000, 4.7),
+  shop('shop_watch', 'Watch World Mall', 2018, 99, 66000, 4.8),
+  shop('shop_mobile', 'Mobile Giá Tốt', 2021, 94, 71000, 4.6)
+]
+
 export const products = [
   {
     id: 'p001',
@@ -17,11 +53,24 @@ export const products = [
     sold: 1200,
     views: 103200,
     stock: 138,
-    isBestSeller: true,
     createdAt: timeOffset(1),
     images: ['/assets/products/phone-blue.svg','/assets/products/phone-purple.svg','/assets/products/phone-black.svg','/assets/products/phone-green.svg'],
-    description: 'Vsmart Active 3 có thiết kế hiện đại, hiệu năng ổn định, phù hợp cho nhu cầu học tập, làm việc và giải trí hằng ngày. Máy có dung lượng 6GB/64GB và màn hình lớn, dễ sử dụng.',
-    brand: 'Vsmart'
+    description: 'Vsmart Active 3 có thiết kế hiện đại, hiệu năng ổn định, phù hợp cho nhu cầu học tập, làm việc và giải trí hằng ngày.',
+    brand: 'Vsmart',
+    shopId: 'shop_mobile',
+    shippingFee: 32000,
+    shippingLeadTime: 'Nhận từ 2 - 4 ngày',
+    location: 'Quận 10, TP. Hồ Chí Minh',
+    isBestSeller: true,
+    variations: [
+      { name: 'Màu', options: ['Xanh dương', 'Tím', 'Đen', 'Xanh lá'] },
+      { name: 'Phiên bản', options: ['6GB/64GB', '8GB/128GB'] }
+    ],
+    reviewStats: { 5: 120, 4: 32, 3: 10, 2: 4, 1: 3 },
+    reviews: [
+      review('Nguyễn Minh', 5, 'Máy đẹp, giao nhanh, đóng gói chắc chắn.', 2, ['/assets/products/phone-blue.svg']),
+      review('Trần Phương', 4, 'Dùng ổn trong tầm giá, pin đủ một ngày.', 4)
+    ]
   },
   {
     id: 'p002',
@@ -35,11 +84,21 @@ export const products = [
     sold: 6800,
     views: 92400,
     stock: 85,
-    isBestSeller: true,
     createdAt: timeOffset(4),
     images: ['/assets/products/phone-cyan.svg','/assets/products/phone-blue.svg','/assets/products/phone-black.svg'],
-    description: 'OPPO A12 nổi bật với pin tốt, màn hình rộng và kiểu dáng trẻ trung. Đây là mẫu máy phù hợp với người cần một chiếc điện thoại giá hợp lý.',
-    brand: 'OPPO'
+    description: 'OPPO A12 nổi bật với pin tốt, màn hình rộng và kiểu dáng trẻ trung.',
+    brand: 'OPPO',
+    shopId: 'shop_mobile',
+    shippingFee: 30000,
+    shippingLeadTime: 'Nhận từ 2 - 5 ngày',
+    location: 'TP. Hồ Chí Minh',
+    isBestSeller: true,
+    variations: [
+      { name: 'Màu', options: ['Xanh cyan', 'Xanh dương', 'Đen'] },
+      { name: 'Phiên bản', options: ['3GB/32GB'] }
+    ],
+    reviewStats: { 5: 320, 4: 89, 3: 22, 2: 9, 1: 8 },
+    reviews: [review('Hà An', 5, 'Giá ổn, máy dùng mượt, mua cho phụ huynh rất hợp.', 3)]
   },
   {
     id: 'p003',
@@ -53,11 +112,24 @@ export const products = [
     sold: 482,
     views: 24800,
     stock: 21,
-    isBestSeller: true,
     createdAt: timeOffset(2),
     images: ['/assets/products/phone-red.svg','/assets/products/phone-white.svg','/assets/products/phone-green.svg','/assets/products/phone-blue.svg'],
-    description: 'iPhone 12 mang lại trải nghiệm cao cấp với thiết kế vuông vức, hiệu năng mạnh mẽ và cụm camera ổn định. Phù hợp cho người muốn một mẫu máy bền và đẹp.',
-    brand: 'Apple'
+    description: 'iPhone 12 mang lại trải nghiệm cao cấp với thiết kế vuông vức, hiệu năng mạnh mẽ và cụm camera ổn định.',
+    brand: 'Apple',
+    shopId: 'shop_apple',
+    shippingFee: 18000,
+    shippingLeadTime: 'Nhận từ ngày mai',
+    location: 'Hà Nội',
+    isBestSeller: true,
+    variations: [
+      { name: 'Màu', options: ['Đỏ', 'Trắng', 'Xanh lá', 'Xanh dương'] },
+      { name: 'Dung lượng', options: ['64GB', '128GB', '256GB'] }
+    ],
+    reviewStats: { 5: 543, 4: 48, 3: 7, 2: 2, 1: 1 },
+    reviews: [
+      review('Lê Hồng', 5, 'Hàng chuẩn, kích hoạt bình thường, shop uy tín.', 2, ['/assets/products/phone-red.svg']),
+      review('Vũ Đức', 5, 'Mượt, camera đẹp, sẽ ủng hộ shop lần sau.', 7)
+    ]
   },
   {
     id: 'p004',
@@ -71,11 +143,21 @@ export const products = [
     sold: 5600,
     views: 77300,
     stock: 66,
-    isBestSeller: false,
     createdAt: timeOffset(8),
     images: ['/assets/products/phone-green.svg','/assets/products/phone-cyan.svg','/assets/products/phone-black.svg'],
-    description: 'Realme C11 là sản phẩm phổ thông có thiết kế dễ dùng, pin khỏe và mức giá dễ tiếp cận cho học sinh, sinh viên.',
-    brand: 'Realme'
+    description: 'Realme C11 là sản phẩm phổ thông có thiết kế dễ dùng, pin khỏe và mức giá dễ tiếp cận.',
+    brand: 'Realme',
+    shopId: 'shop_mobile',
+    shippingFee: 28000,
+    shippingLeadTime: 'Nhận từ 2 - 4 ngày',
+    location: 'Bình Dương',
+    isBestSeller: false,
+    variations: [
+      { name: 'Màu', options: ['Xanh lá', 'Xanh cyan', 'Đen'] },
+      { name: 'Phiên bản', options: ['2GB/32GB'] }
+    ],
+    reviewStats: { 5: 205, 4: 91, 3: 30, 2: 12, 1: 5 },
+    reviews: [review('Khánh Linh', 4, 'Máy ổn với nhu cầu cơ bản.', 5)]
   },
   {
     id: 'p005',
@@ -89,11 +171,21 @@ export const products = [
     sold: 2300,
     views: 68900,
     stock: 45,
-    isBestSeller: true,
     createdAt: timeOffset(5),
     images: ['/assets/products/phone-green.svg','/assets/products/phone-white.svg','/assets/products/phone-black.svg'],
-    description: 'Galaxy A54 cân bằng giữa thiết kế đẹp, camera tốt và màn hình hiển thị sắc nét. Phù hợp cho người dùng yêu cầu độ ổn định cao.',
-    brand: 'Samsung'
+    description: 'Galaxy A54 cân bằng giữa thiết kế đẹp, camera tốt và màn hình hiển thị sắc nét.',
+    brand: 'Samsung',
+    shopId: 'shop_samsung',
+    shippingFee: 15000,
+    shippingLeadTime: 'Nhận từ ngày mai',
+    location: 'Đà Nẵng',
+    isBestSeller: true,
+    variations: [
+      { name: 'Màu', options: ['Xanh Mint', 'Trắng', 'Đen'] },
+      { name: 'Phiên bản', options: ['8GB/128GB', '8GB/256GB'] }
+    ],
+    reviewStats: { 5: 264, 4: 58, 3: 10, 2: 3, 1: 1 },
+    reviews: [review('Thu Trang', 5, 'Màn hình đẹp, pin ổn, ship nhanh.', 1)]
   },
   {
     id: 'p006',
@@ -107,119 +199,21 @@ export const products = [
     sold: 1700,
     views: 53300,
     stock: 59,
-    isBestSeller: false,
     createdAt: timeOffset(3),
     images: ['/assets/products/phone-blue.svg','/assets/products/phone-cyan.svg','/assets/products/phone-black.svg'],
-    description: 'Redmi Note 13 có hiệu năng tốt trong tầm giá, màn hình lớn và pin ổn định. Máy phù hợp cho cả học tập lẫn giải trí.',
-    brand: 'Xiaomi'
-  },
-  {
-    id: 'p007',
-    slug: 'dien-thoai-vivo-v29e-tim',
-    name: 'Điện thoại Vivo V29e - Tím',
-    category: 'phone',
-    price: 7490000,
-    oldPrice: 8290000,
-    discountPercent: 10,
-    rating: 4.5,
-    sold: 980,
-    views: 41200,
-    stock: 52,
+    description: 'Redmi Note 13 có hiệu năng tốt trong tầm giá, màn hình lớn và pin ổn định.',
+    brand: 'Xiaomi',
+    shopId: 'shop_xiaomi',
+    shippingFee: 22000,
+    shippingLeadTime: 'Nhận từ 2 - 3 ngày',
+    location: 'TP. Hồ Chí Minh',
     isBestSeller: false,
-    createdAt: timeOffset(7),
-    images: ['/assets/products/phone-purple.svg','/assets/products/phone-blue.svg','/assets/products/phone-white.svg'],
-    description: 'Vivo V29e có ngoại hình thời trang, cảm giác cầm nắm tốt và camera selfie đẹp, phù hợp với người dùng trẻ.',
-    brand: 'Vivo'
-  },
-  {
-    id: 'p008',
-    slug: 'dien-thoai-iphone-13-mini-xanh',
-    name: 'Điện thoại Apple Iphone 13 Mini - Xanh',
-    category: 'phone',
-    price: 18490000,
-    oldPrice: 20990000,
-    discountPercent: 12,
-    rating: 4.9,
-    sold: 740,
-    views: 37600,
-    stock: 18,
-    isBestSeller: true,
-    createdAt: timeOffset(6),
-    images: ['/assets/products/phone-blue.svg','/assets/products/phone-red.svg','/assets/products/phone-green.svg'],
-    description: 'iPhone 13 Mini nhỏ gọn, mạnh mẽ và phù hợp với người thích điện thoại dễ cầm nhưng vẫn có hiệu năng cao.',
-    brand: 'Apple'
-  },
-  {
-    id: 'p009',
-    slug: 'dien-thoai-nokia-g22-den',
-    name: 'Điện thoại Nokia G22 - Đen',
-    category: 'phone',
-    price: 3890000,
-    oldPrice: 4390000,
-    discountPercent: 11,
-    rating: 4.3,
-    sold: 530,
-    views: 28100,
-    stock: 36,
-    isBestSeller: false,
-    createdAt: timeOffset(14),
-    images: ['/assets/products/phone-black.svg','/assets/products/phone-green.svg','/assets/products/phone-white.svg'],
-    description: 'Nokia G22 hướng tới độ bền, sự ổn định và trải nghiệm sử dụng đơn giản. Đây là lựa chọn hợp lý cho người ưu tiên sự chắc chắn.',
-    brand: 'Nokia'
-  },
-  {
-    id: 'p010',
-    slug: 'dien-thoai-infinix-note-30-trang',
-    name: 'Điện thoại Infinix Note 30 - Trắng',
-    category: 'phone',
-    price: 4690000,
-    oldPrice: 5190000,
-    discountPercent: 10,
-    rating: 4.4,
-    sold: 860,
-    views: 33400,
-    stock: 41,
-    isBestSeller: false,
-    createdAt: timeOffset(9),
-    images: ['/assets/products/phone-white.svg','/assets/products/phone-black.svg','/assets/products/phone-cyan.svg'],
-    description: 'Infinix Note 30 có thiết kế trẻ trung, bộ nhớ tốt và màn hình lớn, phù hợp cho giải trí cơ bản và công việc hằng ngày.',
-    brand: 'Infinix'
-  },
-  {
-    id: 'p011',
-    slug: 'dien-thoai-honor-x7b-xanh-cyan',
-    name: 'Điện thoại Honor X7b - Xanh Cyan',
-    category: 'phone',
-    price: 5290000,
-    oldPrice: 5890000,
-    discountPercent: 10,
-    rating: 4.6,
-    sold: 1140,
-    views: 39100,
-    stock: 48,
-    isBestSeller: false,
-    createdAt: timeOffset(12),
-    images: ['/assets/products/phone-cyan.svg','/assets/products/phone-green.svg','/assets/products/phone-blue.svg'],
-    description: 'Honor X7b là chiếc máy cân bằng giữa pin, màn hình và kiểu dáng. Phù hợp cho người dùng thích giao diện hiện đại.',
-    brand: 'Honor'
-  },
-  {
-    id: 'p012',
-    slug: 'dien-thoai-sony-xperia-lite-do',
-    name: 'Điện thoại Sony Xperia Lite - Đỏ',
-    category: 'phone',
-    price: 6290000,
-    oldPrice: 6890000,
-    discountPercent: 9,
-    rating: 4.2,
-    sold: 410,
-    views: 21500,
-    stock: 29,
-    isBestSeller: false,
-    createdAt: timeOffset(18),
-    images: ['/assets/products/phone-red.svg','/assets/products/phone-black.svg','/assets/products/phone-white.svg'],
-    description: 'Sony Xperia Lite có phong cách tối giản, màn hình đẹp và trải nghiệm mượt mà ở các nhu cầu phổ thông.',
-    brand: 'Sony'
+    variations: [
+      { name: 'Màu', options: ['Xanh dương', 'Xanh cyan', 'Đen'] },
+      { name: 'Phiên bản', options: ['8GB/128GB', '8GB/256GB'] }
+    ],
+    reviewStats: { 5: 189, 4: 47, 3: 15, 2: 4, 1: 2 },
+    reviews: [review('Duy Khoa', 5, 'Mượt trong tầm giá, loa khá to.', 6)]
   },
   {
     id: 'p013',
@@ -233,11 +227,21 @@ export const products = [
     sold: 2200,
     views: 55100,
     stock: 77,
-    isBestSeller: true,
     createdAt: timeOffset(11),
     images: ['/assets/products/watch-silver.svg','/assets/products/watch-black.svg','/assets/products/watch-gold.svg'],
     description: 'Mẫu đồng hồ cổ điển dễ phối đồ, kiểu dáng sang trọng, phù hợp cho đi làm và đi chơi.',
-    brand: 'Classic'
+    brand: 'Classic',
+    shopId: 'shop_watch',
+    shippingFee: 16000,
+    shippingLeadTime: 'Nhận từ 2 - 4 ngày',
+    location: 'Hà Nội',
+    isBestSeller: true,
+    variations: [
+      { name: 'Màu', options: ['Bạc', 'Đen', 'Vàng'] },
+      { name: 'Size', options: ['40mm', '42mm'] }
+    ],
+    reviewStats: { 5: 302, 4: 50, 3: 12, 2: 3, 1: 1 },
+    reviews: [review('Phúc Hưng', 5, 'Đeo đẹp, sang, đúng hình.', 9)]
   },
   {
     id: 'p014',
@@ -251,29 +255,21 @@ export const products = [
     sold: 1800,
     views: 43600,
     stock: 54,
-    isBestSeller: true,
     createdAt: timeOffset(16),
     images: ['/assets/products/watch-black.svg','/assets/products/watch-silver.svg'],
     description: 'Đồng hồ sport phù hợp với người thích phong cách năng động, mặt đồng hồ rõ và dễ sử dụng.',
-    brand: 'SportX'
-  },
-  {
-    id: 'p015',
-    slug: 'dong-ho-luxury-gold',
-    name: 'Đồng Hồ Luxury Gold Sang Trọng',
-    category: 'watch',
-    price: 1490000,
-    oldPrice: 1890000,
-    discountPercent: 21,
-    rating: 4.7,
-    sold: 960,
-    views: 32700,
-    stock: 33,
-    isBestSeller: false,
-    createdAt: timeOffset(20),
-    images: ['/assets/products/watch-gold.svg','/assets/products/watch-silver.svg'],
-    description: 'Mẫu đồng hồ luxury thiên về phong cách lịch sự, phù hợp cho môi trường công sở và các buổi gặp mặt.',
-    brand: 'LuxTime'
+    brand: 'SportX',
+    shopId: 'shop_watch',
+    shippingFee: 16000,
+    shippingLeadTime: 'Nhận từ 2 - 4 ngày',
+    location: 'Hải Phòng',
+    isBestSeller: true,
+    variations: [
+      { name: 'Màu', options: ['Đen', 'Bạc'] },
+      { name: 'Size', options: ['40mm', '44mm'] }
+    ],
+    reviewStats: { 5: 211, 4: 66, 3: 18, 2: 5, 1: 3 },
+    reviews: [review('Nam Trần', 4, 'Đẹp, cứng cáp, hợp giá tiền.', 8)]
   },
   {
     id: 'p016',
@@ -287,11 +283,24 @@ export const products = [
     sold: 6400,
     views: 81200,
     stock: 144,
-    isBestSeller: true,
     createdAt: timeOffset(10),
     images: ['/assets/products/shirt-white.svg','/assets/products/shirt-red.svg','/assets/products/shirt-black.svg'],
     description: 'Áo thun basic form rộng, chất vải dễ mặc và phù hợp để phối đồ hằng ngày.',
-    brand: 'BasicLab'
+    brand: 'BasicLab',
+    shopId: 'shop_fashion',
+    shippingFee: 18000,
+    shippingLeadTime: 'Nhận từ 2 - 3 ngày',
+    location: 'TP. Hồ Chí Minh',
+    isBestSeller: true,
+    variations: [
+      { name: 'Màu', options: ['Trắng', 'Đỏ', 'Đen'] },
+      { name: 'Size', options: ['S', 'M', 'L', 'XL'] }
+    ],
+    reviewStats: { 5: 560, 4: 123, 3: 29, 2: 7, 1: 6 },
+    reviews: [
+      review('Bảo Châu', 5, 'Chất áo ổn, form đẹp, giao hàng nhanh.', 2, ['/assets/products/shirt-white.svg']),
+      review('Lê My', 4, 'Mặc thoải mái, nên mua.', 6)
+    ]
   },
   {
     id: 'p017',
@@ -305,11 +314,21 @@ export const products = [
     sold: 2300,
     views: 29800,
     stock: 91,
-    isBestSeller: false,
     createdAt: timeOffset(13),
     images: ['/assets/products/shirt-red.svg','/assets/products/shirt-white.svg','/assets/products/shirt-black.svg'],
     description: 'Mẫu áo thun màu nổi, phù hợp cho phong cách trẻ trung và năng động.',
-    brand: 'StreetWear'
+    brand: 'StreetWear',
+    shopId: 'shop_fashion',
+    shippingFee: 18000,
+    shippingLeadTime: 'Nhận từ 2 - 3 ngày',
+    location: 'TP. Hồ Chí Minh',
+    isBestSeller: false,
+    variations: [
+      { name: 'Màu', options: ['Đỏ cam', 'Trắng', 'Đen'] },
+      { name: 'Size', options: ['M', 'L', 'XL'] }
+    ],
+    reviewStats: { 5: 201, 4: 60, 3: 19, 2: 4, 1: 2 },
+    reviews: [review('Hoàng Long', 5, 'Màu đẹp, form ổn.', 12)]
   },
   {
     id: 'p018',
@@ -323,10 +342,24 @@ export const products = [
     sold: 3200,
     views: 42100,
     stock: 103,
-    isBestSeller: true,
     createdAt: timeOffset(15),
     images: ['/assets/products/shirt-black.svg','/assets/products/shirt-white.svg','/assets/products/shirt-red.svg'],
     description: 'Áo thun basic màu đen dễ phối và hợp với nhiều phong cách, từ đi học đến đi chơi.',
-    brand: 'StreetWear'
+    brand: 'StreetWear',
+    shopId: 'shop_fashion',
+    shippingFee: 18000,
+    shippingLeadTime: 'Nhận từ 2 - 3 ngày',
+    location: 'TP. Hồ Chí Minh',
+    isBestSeller: true,
+    variations: [
+      { name: 'Màu', options: ['Đen', 'Trắng', 'Đỏ'] },
+      { name: 'Size', options: ['S', 'M', 'L', 'XL'] }
+    ],
+    reviewStats: { 5: 287, 4: 74, 3: 16, 2: 4, 1: 1 },
+    reviews: [review('Thuỳ Anh', 5, 'Áo đẹp, đáng tiền.', 11)]
   }
 ]
+
+for (const store of shops) {
+  store.productsCount = products.filter((product) => product.shopId === store.id).length
+}
