@@ -3,22 +3,31 @@ import { useMemo, useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useCart } from '../../contexts/CartContext'
 import { useLanguage } from '../../contexts/LanguageContext'
+import { useWishlist } from '../../contexts/WishlistContext'
+import { useNotifications } from '../../contexts/NotificationContext'
+import { addSearchHistory, getSearchSuggestions } from '../../services/product.service'
 import './Header.css'
 
 function Header() {
   const navigate = useNavigate()
   const { user, isAuthenticated, logout } = useAuth()
   const { totalQuantity } = useCart()
+  const { wishlistIds } = useWishlist()
+  const { unreadCount } = useNotifications()
   const { language, changeLanguage, t } = useLanguage()
   const [keyword, setKeyword] = useState('')
   const [showMenu, setShowMenu] = useState(false)
   const [showLanguageMenu, setShowLanguageMenu] = useState(false)
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   const avatarFallback = useMemo(() => (user?.name || 'U').slice(0, 1).toUpperCase(), [user])
+  const suggestions = getSearchSuggestions(keyword)
 
-  const handleSearch = (event) => {
-    event.preventDefault()
-    const query = keyword.trim()
+  const handleSearch = (event, forcedKeyword) => {
+    if (event) event.preventDefault()
+    const query = (forcedKeyword ?? keyword).trim()
+    addSearchHistory(query)
+    setShowSuggestions(false)
     navigate(query ? `/?keyword=${encodeURIComponent(query)}` : '/')
   }
 
@@ -61,6 +70,8 @@ function Header() {
                   <div className="header-dropdown-menu">
                     <Link to="/user/account">{t('account')}</Link>
                     <Link to="/user/purchase">{t('orders')}</Link>
+                    <Link to="/wishlist">Yêu thích</Link>
+                    <Link to="/notifications">Thông báo</Link>
                     <button type="button" onClick={handleLogout}>{t('logout')}</button>
                   </div>
                 )}
@@ -77,15 +88,50 @@ function Header() {
             <div className="header-logo-text">Shopee</div>
           </Link>
 
-          <form className="header-search" onSubmit={handleSearch}>
-            <input type="text" placeholder={t('searchPlaceholder')} value={keyword} onChange={(e) => setKeyword(e.target.value)} />
-            <button type="submit">🔍</button>
-          </form>
+          <div className="header-search-wrap">
+            <form className="header-search" onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder={t('searchPlaceholder')}
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+              />
+              <button type="submit">🔍</button>
+            </form>
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="header-search-suggestion-box" onMouseLeave={() => setShowSuggestions(false)}>
+                {suggestions.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    className="header-search-suggestion"
+                    onClick={() => {
+                      setKeyword(item)
+                      handleSearch(null, item)
+                    }}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
-          <Link to="/cart" className="header-cart" aria-label="Giỏ hàng">
-            <span className="header-cart-icon">🛒</span>
-            {totalQuantity > 0 && <span className="header-cart-count">{totalQuantity}</span>}
-          </Link>
+          <div className="header-action-icons">
+            <Link to="/wishlist" className="header-icon-link" aria-label="Yêu thích">
+              <span>❤</span>
+              {wishlistIds.length > 0 && <small>{wishlistIds.length}</small>}
+            </Link>
+            <Link to="/notifications" className="header-icon-link" aria-label="Thông báo">
+              <span>🔔</span>
+              {unreadCount > 0 && <small>{unreadCount}</small>}
+            </Link>
+            <Link to="/cart" className="header-cart" aria-label="Giỏ hàng">
+              <span className="header-cart-icon">🛒</span>
+              {totalQuantity > 0 && <span className="header-cart-count">{totalQuantity}</span>}
+            </Link>
+          </div>
         </div>
       </div>
     </header>

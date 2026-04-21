@@ -1,9 +1,9 @@
-export function getStorageValue(key, fallbackValue) {
+export function getStorageValue(key, defaultValue) {
   try {
     const raw = localStorage.getItem(key)
-    return raw ? JSON.parse(raw) : fallbackValue
+    return raw ? JSON.parse(raw) : defaultValue
   } catch (error) {
-    return fallbackValue
+    return defaultValue
   }
 }
 

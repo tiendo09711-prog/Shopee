@@ -1,18 +1,24 @@
 import { AuthProvider } from './contexts/AuthContext'
 import { CartProvider } from './contexts/CartContext'
 import { LanguageProvider } from './contexts/LanguageContext'
+import { NotificationProvider } from './contexts/NotificationContext'
 import { OrderProvider } from './contexts/OrderContext'
+import { WishlistProvider } from './contexts/WishlistContext'
 import AppRoutes from './routes/AppRoutes'
 
 function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
-        <CartProvider>
-          <OrderProvider>
-            <AppRoutes />
-          </OrderProvider>
-        </CartProvider>
+        <NotificationProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <OrderProvider>
+                <AppRoutes />
+              </OrderProvider>
+            </CartProvider>
+          </WishlistProvider>
+        </NotificationProvider>
       </AuthProvider>
     </LanguageProvider>
   )

@@ -4,19 +4,27 @@ import ProductDetail from '../pages/ProductDetail/ProductDetail'
 import Login from '../pages/Login/Login'
 import Register from '../pages/Register/Register'
 import Cart from '../pages/Cart/Cart'
+import CheckoutPage from '../pages/Checkout/CheckoutPage'
 import NotFound from '../pages/NotFound/NotFound'
 import PurchasePage from '../pages/Purchase/PurchasePage'
 import ProfilePage from '../pages/Profile/ProfilePage'
 import ChangePasswordPage from '../pages/Profile/ChangePasswordPage'
+import ShopPage from '../pages/Shop/ShopPage'
+import WishlistPage from '../pages/Wishlist/WishlistPage'
+import NotificationsPage from '../pages/Notifications/NotificationsPage'
 
 function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/product/:slug" element={<ProductDetail />} />
+      <Route path="/shop/:shopId" element={<ShopPage />} />
+      <Route path="/wishlist" element={<WishlistPage />} />
+      <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/cart" element={<Cart />} />
+      <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/user/account" element={<ProfilePage />} />
       <Route path="/user/password" element={<ChangePasswordPage />} />
       <Route path="/user/purchase" element={<PurchasePage />} />
