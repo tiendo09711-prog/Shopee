@@ -1,0 +1,133 @@
+.shop-page {
+  display: grid;
+  gap: 18px;
+}
+
+.shop-hero {
+  padding: 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.shop-hero-main {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.shop-hero-avatar {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: #ffe6df;
+  color: #ee4d2d;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 28px;
+}
+
+.shop-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.shop-tags span {
+  background: #fff5f1;
+  color: #ee4d2d;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.shop-hero-side {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.shop-hero-side > div {
+  display: grid;
+  gap: 4px;
+}
+
+.shop-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 18px;
+}
+
+.shop-product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.shop-chat-box {
+  padding: 18px;
+  height: fit-content;
+  position: sticky;
+  top: 110px;
+}
+
+.shop-chat-messages {
+  min-height: 240px;
+  max-height: 360px;
+  overflow: auto;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.shop-chat-message {
+  max-width: 90%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f3f3f3;
+}
+
+.shop-chat-message.user {
+  margin-left: auto;
+  background: #fff5f1;
+}
+
+.shop-chat-box textarea {
+  width: 100%;
+  min-height: 90px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  resize: vertical;
+}
+
+.shop-chat-box button,
+.shop-chat-box a {
+  margin-top: 10px;
+  display: inline-block;
+  border: 0;
+  background: #ee4d2d;
+  color: #fff;
+  border-radius: 6px;
+  padding: 10px 16px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media (max-width: 1000px) {
+  .shop-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .shop-chat-box {
+    position: static;
+  }
+}

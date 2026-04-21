@@ -1,0 +1,55 @@
+# dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# build output
+dist/
+build/
+coverage/
+
+# cache
+.cache/
+.parcel-cache/
+.vite/
+.eslintcache
+
+# logs
+logs/
+*.log
+
+# runtime files
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+
+# temporary files
+tmp/
+temp/
+*.tmp
+
+# uploads / local storage files if needed
+uploads/
+public/uploads/
+
+# nodemon local config
+nodemon.json
+
+# package manager lock backup
+*.tsbuildinfo
