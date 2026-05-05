@@ -1,0 +1,38 @@
+export const sellerProductsMock = [
+  {
+    id: 'sp_1',
+    name: 'Áo Thun Nam Basic Form Rộng',
+    sku: 'SP-001',
+    stock: 124,
+    price: 129000,
+    status: 'Đang bán',
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'sp_2',
+    name: 'Quần Jeans Nữ Ống Suông',
+    sku: 'SP-002',
+    stock: 58,
+    price: 289000,
+    status: 'Đang bán',
+    image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'sp_3',
+    name: 'Tai Nghe Bluetooth Mini',
+    sku: 'SP-003',
+    stock: 12,
+    price: 349000,
+    status: 'Sắp hết hàng',
+    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: 'sp_4',
+    name: 'Bình Giữ Nhiệt Inox 500ml',
+    sku: 'SP-004',
+    stock: 0,
+    price: 99000,
+    status: 'Tạm ẩn',
+    image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=600&q=80',
+  },
+]
