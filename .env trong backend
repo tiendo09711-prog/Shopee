@@ -1,0 +1,11 @@
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=mongodb://tiendodev:Tien290105@ac-1eo65x2-shard-00-00.gz2riy5.mongodb.net:27017,ac-1eo65x2-shard-00-01.gz2riy5.mongodb.net:27017,ac-1eo65x2-shard-00-02.gz2riy5.mongodb.net:27017/pshop?ssl=true&authSource=admin&replicaSet=atlas-10zrv4-shard-0&retryWrites=true&w=majority&appName=Cluster0-TiendoDEV
+JWT_ACCESS_SECRET=replace_with_access_secret
+JWT_REFRESH_SECRET=replace_with_refresh_secret
+JWT_ACCESS_EXPIRES=15m
+JWT_REFRESH_EXPIRES=7d
+CLIENT_CUSTOMER_URL=http://localhost:5173
+CLIENT_SELLER_URL=http://localhost:5174
+CLIENT_ADMIN_URL=http://localhost:5175
+UPLOAD_DIR=uploads
