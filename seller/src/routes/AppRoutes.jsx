@@ -7,9 +7,13 @@ import SellerOnboardingShipping from '../pages/Seller/SellerOnboardingShipping'
 import SellerOnboardingIdentity from '../pages/Seller/SellerOnboardingIdentity'
 import SellerOnboardingTax from '../pages/Seller/SellerOnboardingTax'
 import SellerOnboardingDone from '../pages/Seller/SellerOnboardingDone'
+import SellerApprovalWaiting from '../pages/Seller/SellerApprovalWaiting'
 import SellerDashboard from '../pages/Seller/SellerDashboard'
 import SellerProducts from '../pages/Seller/SellerProducts'
+import SellerProductForm from '../pages/Seller/SellerProductForm'
+import SellerProductDetail from '../pages/Seller/SellerProductDetail'
 import SellerOrders from '../pages/Seller/SellerOrders'
+import SellerOrderDetail from '../pages/Seller/SellerOrderDetail'
 import SellerShipping from '../pages/Seller/SellerShipping'
 import SellerFinance from '../pages/Seller/SellerFinance'
 import SellerDataCenter from '../pages/Seller/SellerDataCenter'
@@ -25,18 +29,20 @@ function RequireSellerAuth({ children }) {
 }
 
 function RequireSellerReady({ children }) {
-  const { hasSellerAccount, isSellerReady } = useSeller()
+  const { seller, hasSellerAccount, isSellerReady } = useSeller()
   if (!hasSellerAccount) return <Navigate to="/seller/register" replace />
+  if (seller?.status === 'pending_approval' || seller?.status === 'rejected' || seller?.status === 'locked') return <Navigate to="/seller/onboarding/waiting" replace />
   if (!isSellerReady) return <Navigate to="/seller/onboarding/welcome" replace />
   return children
 }
 
 function SellerEntryRedirect() {
   const { isAuthenticated } = useAuth()
-  const { hasSellerAccount, isSellerReady } = useSeller()
+  const { seller, hasSellerAccount, isSellerReady } = useSeller()
 
   if (!isAuthenticated) return <Navigate to="/seller/login" replace />
   if (!hasSellerAccount) return <Navigate to="/seller/register" replace />
+  if (seller?.status === 'pending_approval' || seller?.status === 'rejected' || seller?.status === 'locked') return <Navigate to="/seller/onboarding/waiting" replace />
   if (!isSellerReady) return <Navigate to="/seller/onboarding/welcome" replace />
   return <Navigate to="/seller/dashboard" replace />
 }
@@ -57,11 +63,15 @@ function AppRoutes() {
       <Route path="/seller/onboarding/identity" element={<RequireSellerAuth><SellerOnboardingIdentity /></RequireSellerAuth>} />
       <Route path="/seller/onboarding/tax" element={<RequireSellerAuth><SellerOnboardingTax /></RequireSellerAuth>} />
       <Route path="/seller/onboarding/done" element={<RequireSellerAuth><SellerOnboardingDone /></RequireSellerAuth>} />
+      <Route path="/seller/onboarding/waiting" element={<RequireSellerAuth><SellerApprovalWaiting /></RequireSellerAuth>} />
       <Route path="/seller/dashboard" element={<RequireSellerAuth><RequireSellerReady><SellerDashboard /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/products" element={<RequireSellerAuth><RequireSellerReady><SellerProducts /></RequireSellerReady></RequireSellerAuth>} />
-      <Route path="/seller/products/new" element={<RequireSellerAuth><RequireSellerReady><SellerPlaceholder title="Thêm sản phẩm" /></RequireSellerReady></RequireSellerAuth>} />
+      <Route path="/seller/products/new" element={<RequireSellerAuth><RequireSellerReady><SellerProductForm /></RequireSellerReady></RequireSellerAuth>} />
+      <Route path="/seller/products/:productId" element={<RequireSellerAuth><RequireSellerReady><SellerProductDetail /></RequireSellerReady></RequireSellerAuth>} />
+      <Route path="/seller/products/:productId/edit" element={<RequireSellerAuth><RequireSellerReady><SellerProductForm /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/products/categories" element={<RequireSellerAuth><RequireSellerReady><SellerPlaceholder title="Phân loại sản phẩm" /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/orders" element={<RequireSellerAuth><RequireSellerReady><SellerOrders /></RequireSellerReady></RequireSellerAuth>} />
+      <Route path="/seller/orders/:orderId" element={<RequireSellerAuth><RequireSellerReady><SellerOrderDetail /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/shipping" element={<RequireSellerAuth><RequireSellerReady><SellerShipping /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/shipping/bulk" element={<RequireSellerAuth><RequireSellerReady><SellerPlaceholder title="Giao hàng loạt" /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/finance" element={<RequireSellerAuth><RequireSellerReady><SellerFinance /></RequireSellerReady></RequireSellerAuth>} />

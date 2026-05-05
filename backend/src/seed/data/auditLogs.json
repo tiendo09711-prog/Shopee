@@ -1,0 +1,16 @@
+[
+  {
+    "_id": { "$oid": "665a00000000000000000001" },
+    "actor": { "$oid": "665000000000000000000001" },
+    "actorRole": "admin",
+    "action": "approve_seller",
+    "entityType": "Seller",
+    "entityId": { "$oid": "665100000000000000000001" },
+    "before": { "status": "pending_approval" },
+    "after": { "status": "approved" },
+    "note": "Seed approval log",
+    "ip": "127.0.0.1",
+    "userAgent": "seed-script",
+    "createdAt": { "$date": "2026-04-02T00:00:00.000Z" }
+  }
+]

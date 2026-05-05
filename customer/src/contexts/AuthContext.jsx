@@ -1,40 +1,84 @@
-import { createContext, useContext, useMemo, useState } from 'react'
-import { changeUserPassword, loginUser, registerUser, updateUserProfile } from '../services/auth.service'
-import { getStorageValue, removeStorageValue, setStorageValue } from '../utils/storage'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  changeUserPassword,
+  clearSession,
+  getCurrentSession,
+  loadCurrentUser,
+  loginUser,
+  logoutUser,
+  registerUser,
+  requestPasswordReset,
+  resetPasswordWithToken,
+  updateUserProfile
+} from '../services/auth.service'
 
-const USER_KEY = 'shopee_clone_current_user'
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => getStorageValue(USER_KEY, null))
+  const [user, setUser] = useState(() => getCurrentSession()?.user || null)
+  const [authLoading, setAuthLoading] = useState(Boolean(getCurrentSession()?.accessToken))
 
-  const login = (email, password) => {
-    const loggedInUser = loginUser(email, password)
+  useEffect(() => {
+    let active = true
+    if (!getCurrentSession()?.accessToken) {
+      setAuthLoading(false)
+      return undefined
+    }
+
+    loadCurrentUser()
+      .then((currentUser) => {
+        if (active) setUser(currentUser)
+      })
+      .catch(() => {
+        clearSession()
+        if (active) setUser(null)
+      })
+      .finally(() => {
+        if (active) setAuthLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const login = async (email, password, options) => {
+    const loggedInUser = await loginUser(email, password, options)
     setUser(loggedInUser)
-    setStorageValue(USER_KEY, loggedInUser)
     return loggedInUser
   }
 
   const register = (payload) => registerUser(payload)
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null)
-    removeStorageValue(USER_KEY)
+    await logoutUser()
   }
 
-  const updateProfile = (payload) => {
-    const updatedUser = updateUserProfile(user.id, payload)
+  const updateProfile = async (payload) => {
+    const updatedUser = await updateUserProfile(user.id, payload)
     setUser(updatedUser)
-    setStorageValue(USER_KEY, updatedUser)
     return updatedUser
   }
 
-  const changePassword = (currentPassword, newPassword, confirmPassword) => {
-    changeUserPassword(user.id, currentPassword, newPassword, confirmPassword)
+  const changePassword = async (currentPassword, newPassword, confirmPassword) => {
+    await changeUserPassword(user.id, currentPassword, newPassword, confirmPassword)
+    setUser(null)
     return true
   }
 
-  const value = useMemo(() => ({ user, isAuthenticated: Boolean(user), login, register, logout, updateProfile, changePassword }), [user])
+  const value = useMemo(() => ({
+    user,
+    authLoading,
+    isAuthenticated: Boolean(user),
+    login,
+    register,
+    logout,
+    updateProfile,
+    changePassword,
+    requestPasswordReset,
+    resetPassword: resetPasswordWithToken
+  }), [user, authLoading])
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 

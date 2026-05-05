@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import MainLayout from '../../layout/MainLayout'
 import { useAuth } from '../../contexts/AuthContext'
@@ -7,11 +7,6 @@ import { useOrders } from '../../contexts/OrderContext'
 import { formatCurrency } from '../../utils/formatCurrency'
 import { calculateVoucherDiscount, getPlatformVouchers, getShopVouchers } from '../../services/voucher.service'
 import './CheckoutPage.css'
-
-const addresses = [
-  { id: 'adr_1', name: 'Tuan Do', phone: '0987654321', fullAddress: 'Số 12, Quận 10, TP. Hồ Chí Minh', isDefault: true },
-  { id: 'adr_2', name: 'Tuan Do', phone: '0987654321', fullAddress: 'Số 88, Thủ Đức, TP. Hồ Chí Minh', isDefault: false }
-]
 
 const shippingOptions = [
   { id: 'spx', label: 'SPX Express', fee: 32000 },
@@ -26,17 +21,41 @@ const paymentMethods = [
   { id: 'card', label: 'Thẻ tín dụng/Ghi nợ' }
 ]
 
+function buildInitialAddresses(user) {
+  if (!user?.address && !user?.phone) return []
+  return [{
+    id: 'profile_address',
+    name: user?.name || '',
+    phone: user?.phone || '',
+    fullAddress: user?.address || '',
+    isDefault: true
+  }]
+}
+
+function createEmptyAddress(user) {
+  return {
+    name: user?.name || '',
+    phone: user?.phone || '',
+    fullAddress: ''
+  }
+}
+
 function CheckoutPage() {
   const navigate = useNavigate()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const { selectedItems, selectedTotal, clearSelectedItems } = useCart()
   const { placeOrdersFromCheckout } = useOrders()
 
-  const [addressId, setAddressId] = useState(addresses[0].id)
+  const [addresses, setAddresses] = useState(() => buildInitialAddresses(user))
+  const [addressId, setAddressId] = useState(() => buildInitialAddresses(user)[0]?.id || '')
+  const [showAddressForm, setShowAddressForm] = useState(() => buildInitialAddresses(user).length === 0)
+  const [editingAddressId, setEditingAddressId] = useState('')
+  const [addressForm, setAddressForm] = useState(() => createEmptyAddress(user))
   const [shippingId, setShippingId] = useState(shippingOptions[0].id)
   const [paymentMethod, setPaymentMethod] = useState(paymentMethods[0].id)
   const [selectedVoucherCodes, setSelectedVoucherCodes] = useState([])
   const [notes, setNotes] = useState('')
+  const [message, setMessage] = useState('')
 
   const vouchers = [...getPlatformVouchers(), ...getShopVouchers()]
   const shipping = shippingOptions.find((item) => item.id === shippingId) || shippingOptions[0]
@@ -46,6 +65,13 @@ function CheckoutPage() {
 
   const selectedCount = useMemo(() => selectedItems.reduce((sum, item) => sum + item.quantity, 0), [selectedItems])
 
+  useEffect(() => {
+    const nextAddresses = buildInitialAddresses(user)
+    setAddresses((prev) => prev.length > 0 ? prev : nextAddresses)
+    setAddressId((prev) => prev || nextAddresses[0]?.id || '')
+    setShowAddressForm((prev) => prev || nextAddresses.length === 0)
+  }, [user])
+
   if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: '/checkout' }} />
   if (!selectedItems.length) return <Navigate to="/cart" replace />
 
@@ -53,26 +79,83 @@ function CheckoutPage() {
     setSelectedVoucherCodes((prev) => prev.includes(code) ? prev.filter((item) => item !== code) : [...prev, code])
   }
 
-  const handlePlaceOrder = () => {
-    const created = placeOrdersFromCheckout({
-      items: selectedItems,
-      address: activeAddress,
-      paymentMethod,
-      shippingProvider: shipping.label,
-      shippingFee: shipping.fee,
-      voucherCodes: selectedVoucherCodes,
-      discount: voucherResult.discount,
-      shippingDiscount: voucherResult.shippingDiscount,
-      notes
-    })
+  const handleAddressFormChange = (key, value) => {
+    setAddressForm((prev) => ({ ...prev, [key]: value }))
+  }
 
-    if (!created.length) {
-      alert('Không thể tạo đơn hàng.')
+  const handleAddAddress = () => {
+    setEditingAddressId('')
+    setAddressForm(createEmptyAddress(user))
+    setShowAddressForm(true)
+    setMessage('')
+  }
+
+  const handleEditAddress = (address) => {
+    setEditingAddressId(address.id)
+    setAddressForm({ name: address.name, phone: address.phone, fullAddress: address.fullAddress })
+    setShowAddressForm(true)
+    setMessage('')
+  }
+
+  const handleSaveAddress = () => {
+    if (!addressForm.name.trim()) {
+      setMessage('Vui lòng nhập tên người nhận.')
+      return
+    }
+    if (!addressForm.phone.trim()) {
+      setMessage('Vui lòng nhập số điện thoại nhận hàng.')
+      return
+    }
+    if (!/^(0|\+84)[0-9]{9,10}$/.test(addressForm.phone.trim())) {
+      setMessage('Số điện thoại nhận hàng không hợp lệ.')
+      return
+    }
+    if (!addressForm.fullAddress.trim()) {
+      setMessage('Vui lòng nhập địa chỉ nhận hàng.')
       return
     }
 
-    clearSelectedItems()
-    navigate('/user/purchase')
+    const nextAddress = {
+      id: editingAddressId || `adr_${Date.now()}`,
+      name: addressForm.name.trim(),
+      phone: addressForm.phone.trim(),
+      fullAddress: addressForm.fullAddress.trim(),
+      isDefault: addresses.length === 0
+    }
+    setAddresses((prev) => editingAddressId
+      ? prev.map((item) => item.id === editingAddressId ? nextAddress : item)
+      : [...prev, nextAddress])
+    setAddressId(nextAddress.id)
+    setShowAddressForm(false)
+    setEditingAddressId('')
+    setMessage('')
+  }
+
+  const handlePlaceOrder = async () => {
+    try {
+      const created = await placeOrdersFromCheckout({
+        items: selectedItems,
+        address: activeAddress,
+        paymentMethod,
+        shippingProvider: shipping.label,
+        shippingFee: shipping.fee,
+        voucherCodes: selectedVoucherCodes,
+        discount: voucherResult.discount,
+        shippingDiscount: voucherResult.shippingDiscount,
+        notes
+      })
+
+      if (!created.length) {
+        setMessage('Không thể tạo đơn hàng.')
+        return
+      }
+
+      clearSelectedItems()
+      navigate('/user/purchase')
+    } catch (error) {
+      setMessage(error.message)
+      return
+    }
   }
 
   return (
@@ -81,6 +164,7 @@ function CheckoutPage() {
         <div className="checkout-main">
           <section className="card checkout-section">
             <h2>Địa chỉ nhận hàng</h2>
+            {message ? <div className="checkout-alert">{message}</div> : null}
             <div className="checkout-address-list">
               {addresses.map((address) => (
                 <label key={address.id} className={`checkout-select-card ${addressId === address.id ? 'active' : ''}`}>
@@ -89,10 +173,24 @@ function CheckoutPage() {
                     <strong>{address.name} · {address.phone}</strong>
                     <p>{address.fullAddress}</p>
                     {address.isDefault ? <span className="checkout-badge">Mặc định</span> : null}
+                    <button type="button" className="checkout-inline-btn" onClick={(event) => { event.preventDefault(); handleEditAddress(address) }}>Sửa</button>
                   </div>
                 </label>
               ))}
             </div>
+            {showAddressForm ? (
+              <div className="checkout-address-form">
+                <input value={addressForm.name} onChange={(e) => handleAddressFormChange('name', e.target.value)} placeholder="Tên người nhận" />
+                <input value={addressForm.phone} onChange={(e) => handleAddressFormChange('phone', e.target.value)} placeholder="Số điện thoại" />
+                <textarea value={addressForm.fullAddress} onChange={(e) => handleAddressFormChange('fullAddress', e.target.value)} placeholder="Địa chỉ đầy đủ" />
+                <div className="checkout-address-actions">
+                  <button type="button" onClick={handleSaveAddress}>{editingAddressId ? 'Lưu địa chỉ' : 'Thêm địa chỉ'}</button>
+                  {addresses.length > 0 ? <button type="button" className="secondary" onClick={() => setShowAddressForm(false)}>Hủy</button> : null}
+                </div>
+              </div>
+            ) : (
+              <button type="button" className="checkout-add-address-btn" onClick={handleAddAddress}>+ Thêm địa chỉ mới</button>
+            )}
           </section>
 
           <section className="card checkout-section">

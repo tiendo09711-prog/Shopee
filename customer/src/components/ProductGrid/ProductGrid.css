@@ -6,6 +6,11 @@
 .product-grid-toolbar {
   padding: 16px 20px;
   margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .product-grid-toolbar h3 {
@@ -13,6 +18,11 @@
   color: var(--shopee-orange);
   font-size: 18px;
   font-weight: 500;
+}
+
+.product-grid-toolbar span {
+  color: #666;
+  font-size: 14px;
 }
 
 .product-grid {

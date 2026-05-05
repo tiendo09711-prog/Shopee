@@ -1,0 +1,16 @@
+[
+  {
+    "_id": { "$oid": "665600000000000000000001" },
+    "order": { "$oid": "665500000000000000000001" },
+    "product": { "$oid": "665300000000000000000001" },
+    "customer": { "$oid": "665000000000000000000002" },
+    "seller": { "$oid": "665100000000000000000001" },
+    "rating": 5,
+    "comment": "San pham tot, giao hang nhanh.",
+    "images": [],
+    "anonymous": false,
+    "status": "visible",
+    "createdAt": { "$date": "2026-04-05T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-05T00:00:00.000Z" }
+  }
+]

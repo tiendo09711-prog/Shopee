@@ -1,0 +1,15 @@
+[
+  {
+    "_id": { "$oid": "665700000000000000000001" },
+    "order": { "$oid": "665500000000000000000002" },
+    "customer": { "$oid": "665000000000000000000002" },
+    "seller": { "$oid": "665100000000000000000001" },
+    "reason": "Muon kiem thu flow hoan tien",
+    "description": "Seed refund request mau de Admin duyet/tu choi.",
+    "images": [],
+    "amount": 16020000,
+    "status": "requested",
+    "createdAt": { "$date": "2026-04-22T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-22T00:00:00.000Z" }
+  }
+]

@@ -11,10 +11,10 @@ function ChangePasswordPage() {
 
   if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: '/user/password' }} />
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     try {
-      changePassword(form.currentPassword, form.newPassword, form.confirmPassword)
+      await changePassword(form.currentPassword, form.newPassword, form.confirmPassword)
       setMessage('Đổi mật khẩu thành công')
       setForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
     } catch (error) {

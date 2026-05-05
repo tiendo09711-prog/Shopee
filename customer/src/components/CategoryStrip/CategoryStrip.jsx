@@ -1,7 +1,6 @@
-import { categories } from '../../data/categories.mock'
 import './CategoryStrip.css'
 
-function CategoryStrip({ activeCategory, onSelectCategory }) {
+function CategoryStrip({ activeCategory, onSelectCategory, categories = [] }) {
   return (
     <section className="category-strip container card">
       {categories.map((category) => (

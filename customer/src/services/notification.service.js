@@ -1,39 +1,29 @@
-import { getStorageValue, setStorageValue } from '../utils/storage'
+import { apiRequest } from './apiClient'
 
-const NOTIFICATION_KEY = 'shopee_clone_notifications'
-
-function getAllNotifications() {
-  return getStorageValue(NOTIFICATION_KEY, {})
+function normalizeNotification(item = {}) {
+  return {
+    ...item,
+    id: item._id || item.id
+  }
 }
 
-function saveAllNotifications(data) {
-  setStorageValue(NOTIFICATION_KEY, data)
-}
-
-export function getNotificationsByUser(userId) {
-  if (!userId) return []
-  return getAllNotifications()[userId] || []
+export async function getNotificationsByUser() {
+  const notifications = await apiRequest('/notifications')
+  return (notifications || []).map(normalizeNotification)
 }
 
 export function pushNotification(userId, payload) {
-  if (!userId) return []
-  const all = getAllNotifications()
-  const current = all[userId] || []
-  const item = {
-    id: `ntf_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+  return [{
+    id: `local_${Date.now()}`,
     createdAt: new Date().toISOString(),
     read: false,
     ...payload
-  }
-  all[userId] = [item, ...current]
-  saveAllNotifications(all)
-  return all[userId]
+  }]
 }
 
-export function markAllNotificationsAsRead(userId) {
-  if (!userId) return []
-  const all = getAllNotifications()
-  all[userId] = (all[userId] || []).map((item) => ({ ...item, read: true }))
-  saveAllNotifications(all)
-  return all[userId]
+export async function markAllNotificationsAsRead(userId, notifications = []) {
+  await Promise.all(notifications.filter((item) => !item.read && !String(item.id).startsWith('local_')).map((item) => (
+    apiRequest(`/notifications/${item.id}/read`, { method: 'PATCH' })
+  )))
+  return notifications.map((item) => ({ ...item, read: true }))
 }

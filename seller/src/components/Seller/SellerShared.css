@@ -548,6 +548,143 @@
 .seller-rightbar h3 { margin-top: 0; }
 .seller-utility-list { display: grid; gap: 12px; }
 .seller-muted { color: #8a8a8a; }
+
+.seller-check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #555;
+  font-size: 14px;
+}
+
+.seller-check-row input {
+  margin-top: 3px;
+}
+
+.seller-page-head,
+.seller-toolbar,
+.seller-row-actions,
+.seller-pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.seller-page-head {
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.seller-toolbar {
+  margin-bottom: 14px;
+}
+
+.seller-toolbar .seller-input {
+  max-width: 220px;
+}
+
+.seller-row-actions a,
+.seller-row-actions button {
+  border: 0;
+  background: transparent;
+  color: #ee4d2d;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+
+.seller-pagination {
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.seller-pagination button {
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.seller-pagination button:disabled {
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.seller-product-images {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.seller-product-images img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.purchase-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.purchase-tabs button {
+  border: 0;
+  background: #f6f6f6;
+  border-radius: 6px;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+.purchase-tabs button.active {
+  background: #ee4d2d;
+  color: #fff;
+}
+
+.order-total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.order-total-row.total {
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+  color: #ee4d2d;
+}
+
+.seller-bar-list {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 18px;
+}
+
+.seller-bar-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 40px;
+  gap: 10px;
+  align-items: center;
+}
+
+.seller-bar-row div {
+  height: 10px;
+  border-radius: 999px;
+  background: #f1f1f1;
+  overflow: hidden;
+}
+
+.seller-bar-row i {
+  display: block;
+  height: 100%;
+  background: #ee4d2d;
+}
 .seller-page-title {
   margin: 0 0 14px;
   font-size: 24px;

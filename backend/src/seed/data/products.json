@@ -1,0 +1,128 @@
+[
+  {
+    "_id": { "$oid": "665300000000000000000001" },
+    "seller": { "$oid": "665100000000000000000001" },
+    "name": "PShop Phone X Black 128GB",
+    "slug": "pshop-phone-x-black-128gb",
+    "sku": "PHONE-X-BLK-128",
+    "category": { "$oid": "665200000000000000000001" },
+    "description": "Dien thoai man hinh OLED, camera kep, pin dung ca ngay.",
+    "price": 12990000,
+    "oldPrice": 14990000,
+    "stock": 25,
+    "sold": 2,
+    "images": ["/assets/products/phone-black.svg", "/assets/products/phone-white.svg"],
+    "attributes": [
+      { "name": "Mau sac", "value": "Den" },
+      { "name": "Dung luong", "value": "128GB" }
+    ],
+    "variants": [
+      { "name": "Mau sac", "options": ["Den", "Trang", "Xanh"] },
+      { "name": "Dung luong", "options": ["128GB", "256GB"] }
+    ],
+    "status": "active",
+    "ratingAverage": 5,
+    "reviewCount": 1,
+    "priceHistory": [
+      {
+        "price": 12990000,
+        "changedAt": { "$date": "2026-04-01T00:00:00.000Z" },
+        "changedBy": { "$oid": "665000000000000000000003" }
+      }
+    ],
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665300000000000000000002" },
+    "seller": { "$oid": "665100000000000000000001" },
+    "name": "PShop Phone Blue 256GB",
+    "slug": "pshop-phone-blue-256gb",
+    "sku": "PHONE-BLU-256",
+    "category": { "$oid": "665200000000000000000001" },
+    "description": "Dien thoai hieu nang cao, dung luong lon, ho tro sac nhanh.",
+    "price": 15990000,
+    "oldPrice": 17990000,
+    "stock": 10,
+    "sold": 1,
+    "images": ["/assets/products/phone-blue.svg"],
+    "attributes": [
+      { "name": "Mau sac", "value": "Xanh" },
+      { "name": "Dung luong", "value": "256GB" }
+    ],
+    "variants": [],
+    "status": "active",
+    "ratingAverage": 4,
+    "reviewCount": 1,
+    "priceHistory": [
+      {
+        "price": 15990000,
+        "changedAt": { "$date": "2026-04-01T00:00:00.000Z" },
+        "changedBy": { "$oid": "665000000000000000000003" }
+      }
+    ],
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665300000000000000000003" },
+    "seller": { "$oid": "665100000000000000000001" },
+    "name": "Smart Watch Silver Pro",
+    "slug": "smart-watch-silver-pro",
+    "sku": "WATCH-SILVER-PRO",
+    "category": { "$oid": "665200000000000000000003" },
+    "description": "Dong ho thong minh do nhip tim, theo doi suc khoe, chong nuoc.",
+    "price": 2990000,
+    "oldPrice": 3490000,
+    "stock": 40,
+    "sold": 0,
+    "images": ["/assets/products/watch-silver.svg"],
+    "attributes": [{ "name": "Mau sac", "value": "Bac" }],
+    "variants": [],
+    "status": "active",
+    "ratingAverage": 0,
+    "reviewCount": 0,
+    "priceHistory": [
+      {
+        "price": 2990000,
+        "changedAt": { "$date": "2026-04-01T00:00:00.000Z" },
+        "changedBy": { "$oid": "665000000000000000000003" }
+      }
+    ],
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665300000000000000000004" },
+    "seller": { "$oid": "665100000000000000000001" },
+    "name": "Ao thun Basic White",
+    "slug": "ao-thun-basic-white",
+    "sku": "SHIRT-BASIC-WHITE",
+    "category": { "$oid": "665200000000000000000002" },
+    "description": "Ao thun cotton basic mau trang.",
+    "price": 159000,
+    "oldPrice": 199000,
+    "stock": 100,
+    "sold": 0,
+    "images": ["/assets/products/shirt-white.svg"],
+    "attributes": [
+      { "name": "Mau sac", "value": "Trang" },
+      { "name": "Size", "value": "M" }
+    ],
+    "variants": [
+      { "name": "Size", "options": ["S", "M", "L", "XL"] }
+    ],
+    "status": "pending_review",
+    "ratingAverage": 0,
+    "reviewCount": 0,
+    "priceHistory": [
+      {
+        "price": 159000,
+        "changedAt": { "$date": "2026-04-10T00:00:00.000Z" },
+        "changedBy": { "$oid": "665000000000000000000003" }
+      }
+    ],
+    "createdAt": { "$date": "2026-04-10T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-10T00:00:00.000Z" }
+  }
+]

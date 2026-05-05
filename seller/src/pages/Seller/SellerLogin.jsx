@@ -22,7 +22,8 @@ function SellerLogin() {
       const targetUser = !isAuthenticated || user?.email !== form.email ? login(form.email, form.password) : user
       const sellerAccount = loginSeller(form.email, form.password, targetUser)
       setMessage(`Đăng nhập thành công: ${sellerAccount.shopName}`)
-      navigate(sellerAccount.onboardingCompleted ? '/seller/dashboard' : '/seller/onboarding/welcome')
+      if (sellerAccount.onboardingCompleted && sellerAccount.status !== 'approved') navigate('/seller/onboarding/waiting')
+      else navigate(sellerAccount.onboardingCompleted ? '/seller/dashboard' : '/seller/onboarding/welcome')
     } catch (err) {
       setError(err.message)
     }
@@ -52,7 +53,7 @@ function SellerLogin() {
               <button type="button" className="seller-auth-social">Facebook</button>
               <button type="button" className="seller-auth-social">Google</button>
             </div>
-            <div className="seller-auth-footer">Demo: buyer + seller dùng tài khoản <strong>demo@gmail.com / 123456</strong>. Nếu bạn đã có tài khoản mua nhưng chưa có seller account, hãy vào trang đăng ký seller.</div>
+            <div className="seller-auth-footer">Demo: buyer + seller dùng tài khoản <strong>demo@gmail.com / 123456</strong>. Seller mới hoàn tất onboarding sẽ chờ Admin duyệt trước khi vào dashboard.</div>
             {message ? <div className="status-message text-success">{message}</div> : null}
             {error ? <div className="status-message text-danger">{error}</div> : null}
             {!hasSellerAccount ? <div className="status-message">Tài khoản mua hiện tại chưa là người bán.</div> : null}

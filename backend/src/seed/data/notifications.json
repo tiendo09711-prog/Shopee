@@ -1,0 +1,29 @@
+[
+  {
+    "_id": { "$oid": "665900000000000000000001" },
+    "user": { "$oid": "665000000000000000000002" },
+    "title": "Don hang dang duoc giao",
+    "message": "Don hang PS202604200001 da duoc ban giao cho don vi van chuyen.",
+    "type": "order",
+    "data": {
+      "orderId": "665500000000000000000002",
+      "orderCode": "PS202604200001"
+    },
+    "read": false,
+    "createdAt": { "$date": "2026-04-21T03:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-21T03:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665900000000000000000002" },
+    "user": { "$oid": "665000000000000000000003" },
+    "title": "San pham cho duyet",
+    "message": "San pham Ao thun Basic White dang cho Admin duyet.",
+    "type": "product",
+    "data": {
+      "productId": "665300000000000000000004"
+    },
+    "read": false,
+    "createdAt": { "$date": "2026-04-10T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-10T00:00:00.000Z" }
+  }
+]
