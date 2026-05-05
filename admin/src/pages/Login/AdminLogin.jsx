@@ -5,19 +5,25 @@ import { useAdminAuth } from '../../contexts/AdminAuthContext'
 function AdminLogin() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthenticated, login } = useAdminAuth()
-  const [form, setForm] = useState({ email: 'admin@pshop.vn', password: 'admin123456' })
+  const { isAuthenticated, login, loading } = useAdminAuth()
+  const [form, setForm] = useState({ email: '', password: '' })
   const [message, setMessage] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
+  if (loading) return null
   if (isAuthenticated) return <Navigate to="/dashboard" replace />
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
+    setMessage('')
+    setSubmitting(true)
     try {
-      login(form.email, form.password)
+      await login(form.email, form.password)
       navigate(location.state?.from || '/dashboard')
     } catch (error) {
       setMessage(error.message)
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -30,7 +36,7 @@ function AdminLogin() {
         </div>
         <input className="admin-search-input" value={form.email} onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))} placeholder="Email admin" />
         <input className="admin-search-input" type="password" value={form.password} onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))} placeholder="Mật khẩu" />
-        <button type="submit" className="admin-primary-btn">Đăng nhập</button>
+        <button type="submit" className="admin-primary-btn" disabled={submitting}>{submitting ? 'Đang xử lý...' : 'Đăng nhập'}</button>
         {message ? <div className="admin-error">{message}</div> : null}
       </form>
     </div>

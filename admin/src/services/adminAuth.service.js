@@ -1,34 +1,34 @@
-import { getStorageValue, removeStorageValue, setStorageValue } from '../utils/storage'
+import { apiRequest, getAdminSession, removeAdminSession, setAdminSession } from './apiClient'
 
-const ADMIN_SESSION_KEY = 'pshop_admin_session'
+export { getAdminSession }
 
-const defaultAdmin = {
-  id: 'admin_default',
-  email: 'admin@pshop.vn',
-  password: 'admin123456',
-  name: 'PShop Admin',
-  role: 'admin',
-  status: 'active',
-}
-
-export function getAdminSession() {
-  return getStorageValue(ADMIN_SESSION_KEY, null)
-}
-
-export function loginAdmin(email, password) {
+export async function loginAdmin(email, password) {
   const normalizedEmail = email.toLowerCase().trim()
   if (!normalizedEmail || !password) throw new Error('Vui lòng nhập email và mật khẩu.')
-  if (password.length < 8) throw new Error('Mật khẩu admin phải có ít nhất 8 ký tự.')
-  if (normalizedEmail !== defaultAdmin.email || password !== defaultAdmin.password) throw new Error('Thông tin đăng nhập admin không đúng.')
-  const session = {
-    token: `admin_${Date.now()}`,
-    user: { id: defaultAdmin.id, email: defaultAdmin.email, name: defaultAdmin.name, role: defaultAdmin.role },
-    createdAt: new Date().toISOString(),
+
+  const data = await apiRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email: normalizedEmail, password }),
+  })
+
+  if (data.user?.role !== 'admin') {
+    throw new Error('Tài khoản này không có quyền admin.')
   }
-  setStorageValue(ADMIN_SESSION_KEY, session)
-  return session
+
+  setAdminSession(data)
+  return { token: data.accessToken, user: data.user }
 }
 
-export function logoutAdmin() {
-  removeStorageValue(ADMIN_SESSION_KEY)
+export async function logoutAdmin() {
+  try {
+    const session = getAdminSession()
+    if (session?.refreshToken) {
+      await apiRequest('/auth/logout', {
+        method: 'POST',
+        body: JSON.stringify({ refreshToken: session.refreshToken }),
+      })
+    }
+  } finally {
+    removeAdminSession()
+  }
 }

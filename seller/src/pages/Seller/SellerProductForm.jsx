@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import SellerDashboardLayout from '../../layout/SellerDashboardLayout'
 import { useSeller } from '../../contexts/SellerContext'
-import { categories } from '../../data/categories.mock'
 import { getSellerProductById, saveSellerProduct } from '../../services/sellerProduct.service'
 
 function imagesToText(images = []) {
@@ -17,40 +16,54 @@ function SellerProductForm() {
   const { productId } = useParams()
   const navigate = useNavigate()
   const { seller } = useSeller()
-  const editingProduct = productId ? getSellerProductById(seller.id, productId) : null
+  const [editingProduct, setEditingProduct] = useState(null)
+  const [notFound, setNotFound] = useState(false)
   const [form, setForm] = useState({
-    name: '',
-    sku: '',
-    categoryId: '',
-    description: '',
-    price: '',
-    stock: '',
-    imagesText: '',
+    name: '', sku: '', categoryId: '', description: '', price: '', stock: '', imagesText: '',
   })
   const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [categories, setCategories] = useState([])
 
   useEffect(() => {
-    if (editingProduct) {
-      setForm({
-        name: editingProduct.name || '',
-        sku: editingProduct.sku || '',
-        categoryId: editingProduct.categoryId || '',
-        description: editingProduct.description || '',
-        price: editingProduct.price || '',
-        stock: editingProduct.stock || '',
-        imagesText: imagesToText(editingProduct.images),
-      })
-    }
-  }, [editingProduct])
+    // Load categories from backend
+    fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/categories`)
+      .then((r) => r.json())
+      .then((payload) => { if (payload.data) setCategories(Array.isArray(payload.data) ? payload.data : []) })
+      .catch(() => {})
+  }, [])
 
-  if (productId && !editingProduct) return <Navigate to="/seller/products" replace />
+  useEffect(() => {
+    if (!productId || !seller?.id) return
+    setLoading(true)
+    getSellerProductById(seller.id, productId)
+      .then((product) => {
+        if (!product) { setNotFound(true); return }
+        setEditingProduct(product)
+        setForm({
+          name: product.name || '',
+          sku: product.sku || '',
+          categoryId: product.category?._id || product.category || product.categoryId || '',
+          description: product.description || '',
+          price: product.price || '',
+          stock: product.stock || '',
+          imagesText: imagesToText(product.images),
+        })
+      })
+      .catch(() => setNotFound(true))
+      .finally(() => setLoading(false))
+  }, [productId, seller])
+
+  if (productId && notFound) return <Navigate to="/seller/products" replace />
 
   const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
 
-  const handleSubmit = (mode) => {
+  const handleSubmit = async (mode) => {
+    setLoading(true)
+    setMessage('')
     try {
-      const saved = saveSellerProduct(seller, {
-        id: editingProduct?.id,
+      const saved = await saveSellerProduct(seller, {
+        _id: editingProduct?._id || editingProduct?.id,
         name: form.name,
         sku: form.sku,
         categoryId: form.categoryId,
@@ -60,9 +73,11 @@ function SellerProductForm() {
         images: textToImages(form.imagesText),
       }, mode)
       setMessage(mode === 'publish' ? 'Sản phẩm đã chuyển sang chờ Admin duyệt.' : 'Đã lưu nháp sản phẩm.')
-      setTimeout(() => navigate(`/seller/products/${saved.id}`), 500)
-    } catch (error) {
-      setMessage(error.message)
+      setTimeout(() => navigate(`/seller/products/${saved._id || saved.id}`), 500)
+    } catch (err) {
+      setMessage(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -75,17 +90,17 @@ function SellerProductForm() {
           <input className="seller-input" value={form.sku} onChange={(e) => handleChange('sku', e.target.value)} placeholder="SKU" />
           <select className="seller-input" value={form.categoryId} onChange={(e) => handleChange('categoryId', e.target.value)}>
             <option value="">Chọn danh mục</option>
-            {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
+            {categories.map((category) => <option key={category._id || category.id} value={category._id || category.id}>{category.name}</option>)}
           </select>
           <textarea className="seller-textarea" value={form.description} onChange={(e) => handleChange('description', e.target.value)} placeholder="Mô tả sản phẩm" />
           <input className="seller-input" type="number" value={form.price} onChange={(e) => handleChange('price', e.target.value)} placeholder="Giá" />
           <input className="seller-input" type="number" value={form.stock} onChange={(e) => handleChange('stock', e.target.value)} placeholder="Tồn kho" />
-          <textarea className="seller-textarea" value={form.imagesText} onChange={(e) => handleChange('imagesText', e.target.value)} placeholder="Ảnh sản phẩm, cách nhau bằng dấu phẩy" />
+          <textarea className="seller-textarea" value={form.imagesText} onChange={(e) => handleChange('imagesText', e.target.value)} placeholder="URL ảnh sản phẩm, cách nhau bằng dấu phẩy" />
         </div>
-        {message ? <div className={message.includes('lỗi') || message.includes('không') || message.includes('Vui lòng') ? 'status-message text-danger' : 'status-message text-success'}>{message}</div> : null}
+        {message ? <div className={message.includes('duyệt') || message.includes('Đã lưu') ? 'status-message text-success' : 'status-message text-danger'}>{message}</div> : null}
         <div className="seller-form-actions">
-          <button type="button" className="seller-outline-btn" onClick={() => handleSubmit('draft')}>Lưu nháp</button>
-          <button type="button" className="seller-primary-btn" onClick={() => handleSubmit('publish')}>Đăng bán</button>
+          <button type="button" className="seller-outline-btn" onClick={() => handleSubmit('draft')} disabled={loading}>Lưu nháp</button>
+          <button type="button" className="seller-primary-btn" onClick={() => handleSubmit('publish')} disabled={loading}>Đăng bán</button>
         </div>
       </section>
     </SellerDashboardLayout>
