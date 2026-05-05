@@ -1,0 +1,84 @@
+[
+  {
+    "_id": { "$oid": "665100000000000000000001" },
+    "user": { "$oid": "665000000000000000000003" },
+    "shopName": "PShop Mobile Store",
+    "slug": "pshop-mobile-store",
+    "email": "seller@pshop.vn",
+    "phone": "0900000003",
+    "logo": "/assets/shops/mobile-logo.svg",
+    "coverImage": "/assets/shops/mobile-cover.svg",
+    "description": "Gian hang dien thoai va phu kien chinh hang.",
+    "pickupAddress": {
+      "fullName": "Seller Dien Thoai",
+      "phone": "0900000003",
+      "province": "Ha Noi",
+      "district": "Nam Tu Liem",
+      "ward": "My Dinh 1",
+      "detail": "Kho A1",
+      "fullAddress": "Kho A1, My Dinh 1, Nam Tu Liem, Ha Noi"
+    },
+    "identityInfo": {
+      "type": "cccd",
+      "number": "001200000003",
+      "fullName": "Seller Dien Thoai",
+      "frontImage": "/uploads/identity/seller-front.svg",
+      "backImage": "/uploads/identity/seller-back.svg"
+    },
+    "taxInfo": {
+      "taxCode": "0100000003",
+      "businessType": "individual",
+      "companyName": "",
+      "address": "Nam Tu Liem, Ha Noi"
+    },
+    "legalAccepted": true,
+    "status": "approved",
+    "approvedAt": { "$date": "2026-04-02T00:00:00.000Z" },
+    "approvedBy": { "$oid": "665000000000000000000001" },
+    "ratingAverage": 4.8,
+    "totalProducts": 3,
+    "totalSales": 3,
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-02T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665100000000000000000002" },
+    "user": { "$oid": "665000000000000000000004" },
+    "shopName": "PShop Fashion Pending",
+    "slug": "pshop-fashion-pending",
+    "email": "seller.pending@pshop.vn",
+    "phone": "0900000004",
+    "logo": "/assets/shops/fashion-logo.svg",
+    "coverImage": "/assets/shops/fashion-cover.svg",
+    "description": "Gian hang thoi trang dang cho Admin duyet.",
+    "pickupAddress": {
+      "fullName": "Seller Cho Duyet",
+      "phone": "0900000004",
+      "province": "TP. Ho Chi Minh",
+      "district": "Quan 1",
+      "ward": "Ben Nghe",
+      "detail": "Tang 2",
+      "fullAddress": "Tang 2, Ben Nghe, Quan 1, TP. Ho Chi Minh"
+    },
+    "identityInfo": {
+      "type": "cccd",
+      "number": "079200000004",
+      "fullName": "Seller Cho Duyet",
+      "frontImage": "/uploads/identity/pending-front.svg",
+      "backImage": "/uploads/identity/pending-back.svg"
+    },
+    "taxInfo": {
+      "taxCode": "0300000004",
+      "businessType": "individual",
+      "companyName": "",
+      "address": "Quan 1, TP. Ho Chi Minh"
+    },
+    "legalAccepted": true,
+    "status": "pending_approval",
+    "ratingAverage": 0,
+    "totalProducts": 0,
+    "totalSales": 0,
+    "createdAt": { "$date": "2026-04-05T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-05T00:00:00.000Z" }
+  }
+]

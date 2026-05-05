@@ -5,8 +5,7 @@ export function filterAndSortProducts(products, filters) {
     minPrice = '',
     maxPrice = '',
     rating = 0,
-    sortBy = 'newest',
-    priceOrder = ''
+    sort = 'newest'
   } = filters
 
   let result = [...products]
@@ -14,7 +13,14 @@ export function filterAndSortProducts(products, filters) {
   if (keyword.trim()) {
     const normalized = keyword.toLowerCase().trim()
     result = result.filter((product) =>
-      product.name.toLowerCase().includes(normalized)
+      [
+        product.name,
+        product.description,
+        product.brand,
+        product.sku,
+        product.categoryName,
+        product.category
+      ].filter(Boolean).some((value) => String(value).toLowerCase().includes(normalized))
     )
   }
 
@@ -34,20 +40,16 @@ export function filterAndSortProducts(products, filters) {
     result = result.filter((product) => product.rating >= rating)
   }
 
-  if (sortBy === 'popular') {
+  if (sort === 'popular') {
     result.sort((a, b) => b.views - a.views)
-  } else if (sortBy === 'bestSeller') {
+  } else if (sort === 'bestSeller') {
     result.sort((a, b) => b.sold - a.sold)
+  } else if (sort === 'priceAsc') {
+    result.sort((a, b) => a.price - b.price)
+  } else if (sort === 'priceDesc') {
+    result.sort((a, b) => b.price - a.price)
   } else {
     result.sort((a, b) => b.createdAt - a.createdAt)
-  }
-
-  if (priceOrder === 'asc') {
-    result.sort((a, b) => a.price - b.price)
-  }
-
-  if (priceOrder === 'desc') {
-    result.sort((a, b) => b.price - a.price)
   }
 
   return result

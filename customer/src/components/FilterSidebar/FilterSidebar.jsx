@@ -1,7 +1,6 @@
-import { categories } from '../../data/categories.mock'
 import './FilterSidebar.css'
 
-function FilterSidebar({ filters, onChange, onReset }) {
+function FilterSidebar({ filters, onChange, onReset, categories = [] }) {
   return (
     <aside className="filter-sidebar card">
       <div className="filter-group">
@@ -36,15 +35,12 @@ function FilterSidebar({ filters, onChange, onReset }) {
 
       <div className="filter-group">
         <h3>Sắp Xếp</h3>
-        <select value={filters.sortBy} onChange={(e) => onChange('sortBy', e.target.value)}>
+        <select value={filters.sort} onChange={(e) => onChange('sort', e.target.value)}>
           <option value="newest">Mới nhất</option>
           <option value="popular">Phổ biến</option>
           <option value="bestSeller">Bán chạy</option>
-        </select>
-        <select value={filters.priceOrder} onChange={(e) => onChange('priceOrder', e.target.value)}>
-          <option value="">Giá</option>
-          <option value="asc">Giá thấp đến cao</option>
-          <option value="desc">Giá cao đến thấp</option>
+          <option value="priceAsc">Giá thấp đến cao</option>
+          <option value="priceDesc">Giá cao đến thấp</option>
         </select>
       </div>
 

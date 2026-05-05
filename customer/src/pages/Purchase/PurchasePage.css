@@ -120,6 +120,144 @@
   text-decoration: line-through;
 }
 
+.purchase-feedback {
+  padding: 12px 14px;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.purchase-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.purchase-modal {
+  width: min(520px, 100%);
+  padding: 22px;
+  display: grid;
+  gap: 12px;
+}
+
+.purchase-modal h2 {
+  margin: 0 0 4px;
+}
+
+.purchase-modal input,
+.purchase-modal select,
+.purchase-modal textarea {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.purchase-modal textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.purchase-modal-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #555;
+}
+
+.purchase-modal-check input {
+  width: 16px;
+}
+
+.purchase-modal-error {
+  color: #d0011b;
+  background: #fff5f5;
+  border: 1px solid #ffd6d6;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.purchase-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.purchase-modal-actions button {
+  border: 0;
+  background: #ee4d2d;
+  color: #fff;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.purchase-modal-actions button.secondary {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.order-detail-page {
+  align-content: start;
+}
+
+.order-detail-card {
+  padding: 18px;
+}
+
+.order-detail-card h1,
+.order-detail-card h2 {
+  margin: 0 0 10px;
+}
+
+.order-detail-header,
+.order-detail-product,
+.order-total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+}
+
+.detail-timeline {
+  margin-bottom: 0;
+}
+
+.order-detail-items {
+  display: grid;
+  gap: 12px;
+}
+
+.order-detail-product {
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 12px;
+}
+
+.order-detail-product:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.order-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.order-total-row {
+  margin-top: 10px;
+}
+
+.order-total-row.total {
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+  color: #ee4d2d;
+}
+
 @media (max-width: 1000px) {
   .user-page-layout {
     grid-template-columns: 1fr;
@@ -133,6 +271,17 @@
   }
 
   .purchase-timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .order-detail-header,
+  .order-detail-product,
+  .order-total-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .order-detail-grid {
     grid-template-columns: 1fr;
   }
 }

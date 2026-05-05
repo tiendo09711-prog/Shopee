@@ -9,17 +9,32 @@ export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState([])
 
   useEffect(() => {
-    setNotifications(getNotificationsByUser(user?.id))
+    let active = true
+    if (!user?.id) {
+      setNotifications([])
+      return undefined
+    }
+    getNotificationsByUser(user.id)
+      .then((items) => {
+        if (active) setNotifications(items)
+      })
+      .catch(() => {
+        if (active) setNotifications([])
+      })
+    return () => {
+      active = false
+    }
   }, [user])
 
   const addNotification = (payload) => {
     if (!user?.id) return
-    setNotifications(pushNotification(user.id, payload))
+    setNotifications((prev) => [...pushNotification(user.id, payload), ...prev])
   }
 
-  const markAllRead = () => {
+  const markAllRead = async () => {
     if (!user?.id) return
-    setNotifications(markAllNotificationsAsRead(user.id))
+    const next = await markAllNotificationsAsRead(user.id, notifications)
+    setNotifications(next)
   }
 
   const unreadCount = notifications.filter((item) => !item.read).length

@@ -1,0 +1,142 @@
+[
+  {
+    "_id": { "$oid": "665500000000000000000001" },
+    "orderCode": "PS202604010001",
+    "customer": { "$oid": "665000000000000000000002" },
+    "seller": { "$oid": "665100000000000000000001" },
+    "items": [
+      {
+        "_id": { "$oid": "665500000000000000000101" },
+        "product": { "$oid": "665300000000000000000001" },
+        "name": "PShop Phone X Black 128GB",
+        "image": "/assets/products/phone-black.svg",
+        "sku": "PHONE-X-BLK-128",
+        "quantity": 1,
+        "price": 12990000,
+        "subtotal": 12990000,
+        "reviewed": true
+      }
+    ],
+    "shippingAddress": {
+      "fullName": "Nguyen Van Khach",
+      "phone": "0900000002",
+      "province": "Ha Noi",
+      "district": "Cau Giay",
+      "ward": "Dich Vong Hau",
+      "detail": "So 12, ngo 34",
+      "fullAddress": "So 12, ngo 34, Dich Vong Hau, Cau Giay, Ha Noi"
+    },
+    "subtotal": 12990000,
+    "shippingFee": 30000,
+    "discount": 0,
+    "total": 13020000,
+    "paymentMethod": "cod",
+    "paymentStatus": "paid",
+    "status": "completed",
+    "trackingCode": "GHN000001",
+    "shippingProvider": "GHN",
+    "timeline": [
+      {
+        "status": "pending",
+        "label": "Cho xac nhan",
+        "note": "Don hang duoc tao",
+        "changedBy": { "$oid": "665000000000000000000002" },
+        "changedByRole": "customer",
+        "changedAt": { "$date": "2026-04-01T02:00:00.000Z" }
+      },
+      {
+        "status": "confirmed",
+        "label": "Da xac nhan",
+        "note": "Seller da xac nhan don",
+        "changedBy": { "$oid": "665000000000000000000003" },
+        "changedByRole": "seller",
+        "changedAt": { "$date": "2026-04-01T03:00:00.000Z" }
+      },
+      {
+        "status": "delivered",
+        "label": "Da giao",
+        "note": "Don hang da giao thanh cong",
+        "changedBy": { "$oid": "665000000000000000000003" },
+        "changedByRole": "seller",
+        "changedAt": { "$date": "2026-04-03T03:00:00.000Z" }
+      },
+      {
+        "status": "completed",
+        "label": "Hoan thanh",
+        "note": "Khach hang da nhan hang",
+        "changedBy": { "$oid": "665000000000000000000002" },
+        "changedByRole": "customer",
+        "changedAt": { "$date": "2026-04-04T03:00:00.000Z" }
+      }
+    ],
+    "deliveredAt": { "$date": "2026-04-03T03:00:00.000Z" },
+    "completedAt": { "$date": "2026-04-04T03:00:00.000Z" },
+    "createdAt": { "$date": "2026-04-01T02:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-04T03:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665500000000000000000002" },
+    "orderCode": "PS202604200001",
+    "customer": { "$oid": "665000000000000000000002" },
+    "seller": { "$oid": "665100000000000000000001" },
+    "items": [
+      {
+        "_id": { "$oid": "665500000000000000000102" },
+        "product": { "$oid": "665300000000000000000002" },
+        "name": "PShop Phone Blue 256GB",
+        "image": "/assets/products/phone-blue.svg",
+        "sku": "PHONE-BLU-256",
+        "quantity": 1,
+        "price": 15990000,
+        "subtotal": 15990000,
+        "reviewed": false
+      }
+    ],
+    "shippingAddress": {
+      "fullName": "Nguyen Van Khach",
+      "phone": "0900000002",
+      "province": "Ha Noi",
+      "district": "Cau Giay",
+      "ward": "Dich Vong Hau",
+      "detail": "So 12, ngo 34",
+      "fullAddress": "So 12, ngo 34, Dich Vong Hau, Cau Giay, Ha Noi"
+    },
+    "subtotal": 15990000,
+    "shippingFee": 30000,
+    "discount": 0,
+    "total": 16020000,
+    "paymentMethod": "cod",
+    "paymentStatus": "unpaid",
+    "status": "shipping",
+    "trackingCode": "GHN000002",
+    "shippingProvider": "GHN",
+    "timeline": [
+      {
+        "status": "pending",
+        "label": "Cho xac nhan",
+        "note": "Don hang duoc tao",
+        "changedBy": { "$oid": "665000000000000000000002" },
+        "changedByRole": "customer",
+        "changedAt": { "$date": "2026-04-20T02:00:00.000Z" }
+      },
+      {
+        "status": "confirmed",
+        "label": "Da xac nhan",
+        "note": "Seller da xac nhan don",
+        "changedBy": { "$oid": "665000000000000000000003" },
+        "changedByRole": "seller",
+        "changedAt": { "$date": "2026-04-20T03:00:00.000Z" }
+      },
+      {
+        "status": "shipping",
+        "label": "Dang giao",
+        "note": "Da ban giao van chuyen",
+        "changedBy": { "$oid": "665000000000000000000003" },
+        "changedByRole": "seller",
+        "changedAt": { "$date": "2026-04-21T03:00:00.000Z" }
+      }
+    ],
+    "createdAt": { "$date": "2026-04-20T02:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-21T03:00:00.000Z" }
+  }
+]

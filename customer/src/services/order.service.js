@@ -1,9 +1,9 @@
-import { getStorageValue, setStorageValue } from '../utils/storage'
-
-const ORDERS_KEY = 'shopee_clone_orders'
+import { apiRequest } from './apiClient'
 
 export const ORDER_STATUS = {
   pending: 'Chờ xác nhận',
+  confirmed: 'Đã xác nhận',
+  processing: 'Đang chuẩn bị',
   pickup: 'Chờ lấy hàng',
   shipping: 'Đang giao',
   delivered: 'Đã giao',
@@ -13,86 +13,104 @@ export const ORDER_STATUS = {
   refunded: 'Đã hoàn tiền'
 }
 
-function getAllOrders() {
-  return getStorageValue(ORDERS_KEY, {})
+function normalizeAddress(address = {}) {
+  return {
+    name: address.fullName || address.name || '',
+    phone: address.phone || '',
+    fullAddress: address.fullAddress || address.detail || ''
+  }
 }
 
-function saveAllOrders(data) {
-  setStorageValue(ORDERS_KEY, data)
+function normalizeTimeline(order) {
+  if (Array.isArray(order.timeline) && order.timeline.length > 0) {
+    return order.timeline.map((step) => ({
+      key: step.status,
+      status: step.status,
+      label: step.label || ORDER_STATUS[step.status] || step.status,
+      done: true,
+      at: step.changedAt,
+      by: step.changedByRole
+    }))
+  }
+  return [{ key: order.status, status: order.status, label: ORDER_STATUS[order.status] || order.status, done: true }]
 }
 
-export function getOrdersByUser(userId) {
-  if (!userId) return []
-  return (getAllOrders()[userId] || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-}
-
-export function saveOrdersByUser(userId, orders) {
-  if (!userId) return
-  const all = getAllOrders()
-  all[userId] = orders
-  saveAllOrders(all)
-}
-
-function createTimeline(status) {
-  const now = new Date()
-  const steps = [
-    { key: 'pending', label: 'Đơn hàng đã đặt', done: true, at: now.toISOString() },
-    { key: 'pickup', label: 'Người bán đang chuẩn bị hàng', done: ['pickup', 'shipping', 'delivered', 'completed', 'return_requested', 'refunded'].includes(status), at: null },
-    { key: 'shipping', label: 'Đơn hàng đang được giao', done: ['shipping', 'delivered', 'completed', 'return_requested', 'refunded'].includes(status), at: null },
-    { key: 'delivered', label: 'Đơn hàng đã giao', done: ['delivered', 'completed', 'return_requested', 'refunded'].includes(status), at: null },
-    { key: 'completed', label: 'Đơn hàng hoàn tất', done: ['completed', 'refunded'].includes(status), at: null }
-  ]
-  return steps
-}
-
-export function createOrdersFromCheckout(userId, payload) {
-  const current = getOrdersByUser(userId)
-  const { items, address, paymentMethod, shippingProvider, shippingFee, voucherCodes, discount, shippingDiscount, notes } = payload
-  const createdAt = new Date().toISOString()
-
-  const newOrders = items.map((item) => ({
-    id: `od_${Date.now()}_${item.lineId || item.id}_${Math.random().toString(36).slice(2, 7)}`,
-    status: 'pending',
-    createdAt,
-    updatedAt: createdAt,
-    productId: item.id,
-    slug: item.slug,
+export function normalizeOrder(order = {}) {
+  const items = (order.items || []).map((item) => ({
+    orderItemId: item._id || item.orderItemId || item.product,
+    productId: item.product?._id || item.product,
+    slug: item.product?.slug || item.slug || '',
     name: item.name,
-    image: item.image,
-    quantity: item.quantity,
-    price: item.price,
-    oldPrice: item.oldPrice || item.price,
-    total: item.price * item.quantity,
+    image: item.image || item.product?.images?.[0] || '',
+    quantity: Number(item.quantity || 1),
+    price: Number(item.price || 0),
+    oldPrice: Number(item.oldPrice || item.price || 0),
     variationText: item.variationText || '',
-    shopId: item.shopId,
-    shippingProvider,
-    shippingFee,
-    paymentMethod,
-    address,
-    notes: notes || '',
-    voucherCodes: voucherCodes || [],
-    discount: discount || 0,
-    shippingDiscount: shippingDiscount || 0,
-    finalTotal: Math.max(0, item.price * item.quantity) + Math.max(0, shippingFee - (shippingDiscount || 0)) - (discount || 0),
-    trackingCode: `SPXVN${Math.random().toString().slice(2, 12)}`,
-    timeline: createTimeline('pending')
+    reviewed: Boolean(item.reviewed)
   }))
-
-  saveOrdersByUser(userId, [...newOrders, ...current])
-  return newOrders
+  const firstItem = items[0] || {}
+  return {
+    ...order,
+    id: order._id || order.id,
+    orderCode: order.orderCode || order.id,
+    customerId: order.customer?._id || order.customer,
+    sellerId: order.seller?._id || order.seller,
+    shopId: order.seller?._id || order.seller,
+    shopName: order.seller?.shopName || '',
+    items,
+    orderItems: items,
+    address: normalizeAddress(order.shippingAddress || order.address),
+    finalTotal: Number(order.total ?? order.finalTotal ?? 0),
+    shippingDiscount: Number(order.shippingDiscount || 0),
+    timeline: normalizeTimeline(order),
+    productId: firstItem.productId,
+    slug: firstItem.slug,
+    name: firstItem.name,
+    image: firstItem.image,
+    quantity: items.reduce((sum, item) => sum + item.quantity, 0),
+    price: firstItem.price || 0,
+    oldPrice: firstItem.oldPrice || firstItem.price || 0,
+    total: Number(order.subtotal || 0),
+    variationText: firstItem.variationText || ''
+  }
 }
 
-export function updateOrderStatus(userId, orderId, status) {
-  const orders = getOrdersByUser(userId)
-  const next = orders.map((order) => {
-    if (order.id !== orderId) return order
-    return {
-      ...order,
-      status,
-      updatedAt: new Date().toISOString(),
-      timeline: createTimeline(status)
-    }
+export async function getOrdersByUser() {
+  const orders = await apiRequest('/orders/my')
+  return (orders || []).map(normalizeOrder)
+}
+
+export async function getOrderById(orderId) {
+  const order = await apiRequest(`/orders/my/${orderId}`)
+  return normalizeOrder(order)
+}
+
+export async function createOrdersFromCheckout(userId, payload) {
+  const selectedProductIds = payload.items.map((item) => item.id)
+  const orders = await apiRequest('/orders/checkout', {
+    method: 'POST',
+    body: JSON.stringify({
+      selectedProductIds,
+      shippingAddress: {
+        fullName: payload.address?.name,
+        phone: payload.address?.phone,
+        detail: payload.address?.fullAddress,
+        fullAddress: payload.address?.fullAddress
+      },
+      paymentMethod: payload.paymentMethod === 'wallet' || payload.paymentMethod === 'spaylater' ? 'e_wallet' : payload.paymentMethod,
+      voucherCode: null
+    })
   })
-  saveOrdersByUser(userId, next)
-  return next.find((order) => order.id === orderId)
+  return (orders || []).map(normalizeOrder)
+}
+
+export async function updateOrderStatus(userId, orderId, status, options = {}) {
+  if (status === 'cancelled') {
+    const order = await apiRequest(`/orders/${orderId}/cancel`, {
+      method: 'POST',
+      body: JSON.stringify({ reason: options.cancelReason || options.note || '' })
+    })
+    return normalizeOrder(order)
+  }
+  throw new Error('Trạng thái này cần Seller/Admin cập nhật qua API riêng.')
 }

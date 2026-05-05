@@ -44,6 +44,73 @@
   font-size: 12px;
 }
 
+.checkout-alert {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ffd6d6;
+  background: #fff5f5;
+  color: #d0011b;
+  border-radius: 6px;
+}
+
+.checkout-inline-btn {
+  display: inline-block;
+  margin-top: 8px;
+  border: 0;
+  background: transparent;
+  color: #ee4d2d;
+  cursor: pointer;
+  padding: 0;
+}
+
+.checkout-add-address-btn {
+  margin-top: 12px;
+  border: 1px solid #ee4d2d;
+  color: #ee4d2d;
+  background: #fff;
+  border-radius: 6px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.checkout-address-form {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.checkout-address-form input,
+.checkout-address-form textarea {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.checkout-address-form textarea {
+  min-height: 76px;
+  resize: vertical;
+}
+
+.checkout-address-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.checkout-address-actions button {
+  border: 0;
+  background: #ee4d2d;
+  color: #fff;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.checkout-address-actions button.secondary {
+  background: #f5f5f5;
+  color: #333;
+}
+
 .checkout-item-list {
   display: grid;
   gap: 12px;

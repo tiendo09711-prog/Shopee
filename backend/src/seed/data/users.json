@@ -1,0 +1,70 @@
+[
+  {
+    "_id": { "$oid": "665000000000000000000001" },
+    "name": "Admin PShop",
+    "email": "admin@pshop.vn",
+    "phone": "0900000001",
+    "password": "admin123456",
+    "role": "admin",
+    "avatar": "/assets/avatars/admin.svg",
+    "addresses": [],
+    "status": "active",
+    "failedLoginCount": 0,
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665000000000000000000002" },
+    "name": "Nguyen Van Khach",
+    "email": "customer@pshop.vn",
+    "phone": "0900000002",
+    "password": "customer123456",
+    "role": "customer",
+    "avatar": "/assets/avatars/customer.svg",
+    "addresses": [
+      {
+        "_id": { "$oid": "665000000000000000000102" },
+        "fullName": "Nguyen Van Khach",
+        "phone": "0900000002",
+        "province": "Ha Noi",
+        "district": "Cau Giay",
+        "ward": "Dich Vong Hau",
+        "detail": "So 12, ngo 34",
+        "fullAddress": "So 12, ngo 34, Dich Vong Hau, Cau Giay, Ha Noi",
+        "isDefault": true
+      }
+    ],
+    "status": "active",
+    "failedLoginCount": 0,
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665000000000000000000003" },
+    "name": "Seller Dien Thoai",
+    "email": "seller@pshop.vn",
+    "phone": "0900000003",
+    "password": "seller123456",
+    "role": "seller",
+    "avatar": "/assets/avatars/seller.svg",
+    "addresses": [],
+    "status": "active",
+    "failedLoginCount": 0,
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665000000000000000000004" },
+    "name": "Seller Cho Duyet",
+    "email": "seller.pending@pshop.vn",
+    "phone": "0900000004",
+    "password": "seller123456",
+    "role": "seller",
+    "avatar": "/assets/avatars/seller-pending.svg",
+    "addresses": [],
+    "status": "active",
+    "failedLoginCount": 0,
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-01T00:00:00.000Z" }
+  }
+]

@@ -38,6 +38,69 @@ input {
   font: inherit;
 }
 
+select,
+textarea {
+  font: inherit;
+}
+
+.admin-login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.admin-login-card {
+  width: min(420px, 100%);
+  border: 1px solid var(--admin-line);
+  border-radius: 24px;
+  background: var(--admin-panel);
+  box-shadow: var(--admin-shadow);
+  padding: 24px;
+  display: grid;
+  gap: 14px;
+}
+
+.admin-primary-btn {
+  min-height: 44px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--admin-accent);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0 18px;
+}
+
+.admin-error,
+.admin-message {
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+.admin-error {
+  color: #b91c1c;
+  background: #fff1f2;
+}
+
+.admin-message {
+  color: #166534;
+  background: #f0fdf4;
+  margin: 12px 0;
+}
+
+.admin-form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.admin-form-row .admin-search-input {
+  max-width: 280px;
+}
+
 .admin-shell {
   min-height: 100vh;
   display: grid;

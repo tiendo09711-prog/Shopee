@@ -1,0 +1,24 @@
+[
+  {
+    "_id": { "$oid": "665800000000000000000001" },
+    "reporter": { "$oid": "665000000000000000000002" },
+    "targetType": "product",
+    "targetId": { "$oid": "665300000000000000000004" },
+    "type": "product_violation",
+    "reason": "San pham can kiem duyet",
+    "description": "Seed report mau de Admin xu ly.",
+    "evidence": [],
+    "status": "open",
+    "priority": "medium",
+    "auditTrail": [
+      {
+        "action": "created",
+        "note": "Customer tao bao cao",
+        "by": { "$oid": "665000000000000000000002" },
+        "at": { "$date": "2026-04-23T00:00:00.000Z" }
+      }
+    ],
+    "createdAt": { "$date": "2026-04-23T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-23T00:00:00.000Z" }
+  }
+]

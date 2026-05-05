@@ -1,0 +1,41 @@
+[
+  {
+    "_id": { "$oid": "665200000000000000000001" },
+    "name": "Dien thoai",
+    "slug": "dien-thoai",
+    "description": "Dien thoai thong minh va phu kien.",
+    "image": "/assets/categories/phone.svg",
+    "parent": null,
+    "status": "active",
+    "productsCount": 3,
+    "sortOrder": 1,
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665200000000000000000002" },
+    "name": "Thoi trang",
+    "slug": "thoi-trang",
+    "description": "Quan ao, giay dep va phu kien thoi trang.",
+    "image": "/assets/categories/fashion.svg",
+    "parent": null,
+    "status": "active",
+    "productsCount": 1,
+    "sortOrder": 2,
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-01T00:00:00.000Z" }
+  },
+  {
+    "_id": { "$oid": "665200000000000000000003" },
+    "name": "Dong ho",
+    "slug": "dong-ho",
+    "description": "Dong ho thong minh va dong ho thoi trang.",
+    "image": "/assets/categories/watch.svg",
+    "parent": null,
+    "status": "active",
+    "productsCount": 1,
+    "sortOrder": 3,
+    "createdAt": { "$date": "2026-04-01T00:00:00.000Z" },
+    "updatedAt": { "$date": "2026-04-01T00:00:00.000Z" }
+  }
+]

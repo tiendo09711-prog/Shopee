@@ -1,85 +1,119 @@
-import { getStorageValue, setStorageValue } from '../utils/storage'
+import { apiRequest } from './apiClient'
+import { removeStorageValue, setStorageValue } from '../utils/storage'
 
-const USERS_KEY = 'shopee_clone_users'
+export const SESSIONS_KEY = 'pshop_sessions'
 
-const defaultUsers = [
-  {
-    id: 'u_demo',
-    email: 'demo@gmail.com',
-    password: '123456',
-    name: 'hihihi1111',
-    phone: '0123123123',
-    address: '123123123123',
-    birthDay: '1',
-    birthMonth: '1',
-    birthYear: '1990',
-    avatar: '',
-    avatarThumb: ''
-  }
-]
-
-function getUsers() {
-  const users = getStorageValue(USERS_KEY, null)
-  if (users && Array.isArray(users) && users.length > 0) return users
-  setStorageValue(USERS_KEY, defaultUsers)
-  return defaultUsers
-}
-
-function saveUsers(users) {
-  setStorageValue(USERS_KEY, users)
-}
-
-function publicUser(user) {
+function normalizeUser(user = {}) {
+  const defaultAddress = user.addresses?.find((item) => item.isDefault) || user.addresses?.[0]
   return {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    phone: user.phone || '',
-    address: user.address || '',
+    ...user,
+    id: user._id || user.id,
+    address: defaultAddress?.fullAddress || user.address || '',
+    avatarThumb: user.avatar || user.avatarThumb || '',
     birthDay: user.birthDay || '1',
     birthMonth: user.birthMonth || '1',
-    birthYear: user.birthYear || '1990',
-    avatar: user.avatar || '',
-    avatarThumb: user.avatarThumb || user.avatar || ''
+    birthYear: user.birthYear || '1990'
   }
 }
 
-export function loginUser(email, password) {
-  const users = getUsers()
-  const user = users.find((item) => item.email.toLowerCase() === email.toLowerCase().trim() && item.password === password)
-  if (!user) throw new Error('Email hoặc mật khẩu chưa đúng')
-  return publicUser(user)
+function saveSession(data, remember = false) {
+  const session = {
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken,
+    token: data.accessToken,
+    user: normalizeUser(data.user),
+    remember,
+    createdAt: new Date().toISOString()
+  }
+  setStorageValue(SESSIONS_KEY, session)
+  return session
 }
 
-export function registerUser({ email, password, confirmPassword }) {
-  const users = getUsers()
-  const normalizedEmail = email.toLowerCase().trim()
-  if (!normalizedEmail) throw new Error('Email không được để trống')
-  if (password.length < 6) throw new Error('Mật khẩu phải có ít nhất 6 ký tự')
+export function getCurrentSession() {
+  try {
+    const session = JSON.parse(localStorage.getItem(SESSIONS_KEY) || 'null')
+    if (!session?.user) return null
+    return {
+      ...session,
+      user: normalizeUser(session.user)
+    }
+  } catch (error) {
+    return null
+  }
+}
+
+export function clearSession() {
+  removeStorageValue(SESSIONS_KEY)
+}
+
+export async function loginUser(email, password, options = {}) {
+  const data = await apiRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password, rememberMe: Boolean(options.remember) })
+  })
+  return saveSession(data, Boolean(options.remember)).user
+}
+
+export async function registerUser({ name, email, phone, password, confirmPassword, role = 'customer' }) {
   if (password !== confirmPassword) throw new Error('Mật khẩu nhập lại chưa khớp')
-  if (users.find((item) => item.email.toLowerCase() === normalizedEmail)) throw new Error('Email này đã được đăng ký')
-
-  const name = normalizedEmail.split('@')[0]
-  const newUser = { id: `u_${Date.now()}`, email: normalizedEmail, password, name, phone: '', address: '', birthDay: '1', birthMonth: '1', birthYear: '1990', avatar: '', avatarThumb: '' }
-  saveUsers([...users, newUser])
-  return publicUser(newUser)
+  const user = await apiRequest('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ name, email, phone, password, role })
+  })
+  return normalizeUser(user)
 }
 
-export function updateUserProfile(userId, payload) {
-  const users = getUsers()
-  const nextUsers = users.map((item) => item.id === userId ? { ...item, ...payload } : item)
-  saveUsers(nextUsers)
-  return publicUser(nextUsers.find((item) => item.id === userId))
+export async function loadCurrentUser() {
+  const user = await apiRequest('/auth/me')
+  const session = getCurrentSession()
+  if (session) setStorageValue(SESSIONS_KEY, { ...session, user: normalizeUser(user) })
+  return normalizeUser(user)
 }
 
-export function changeUserPassword(userId, currentPassword, newPassword, confirmPassword) {
-  const users = getUsers()
-  const target = users.find((item) => item.id === userId)
-  if (!target) throw new Error('Không tìm thấy tài khoản')
-  if (target.password !== currentPassword) throw new Error('Mật khẩu hiện tại chưa đúng')
-  if (newPassword.length < 6) throw new Error('Mật khẩu mới phải có ít nhất 6 ký tự')
+export async function updateUserProfile(userId, payload) {
+  const user = await apiRequest('/users/me', {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
+  })
+  const session = getCurrentSession()
+  if (session) setStorageValue(SESSIONS_KEY, { ...session, user: normalizeUser(user) })
+  return normalizeUser(user)
+}
+
+export async function changeUserPassword(userId, currentPassword, newPassword, confirmPassword) {
   if (newPassword !== confirmPassword) throw new Error('Mật khẩu nhập lại chưa khớp')
-  target.password = newPassword
-  saveUsers(users)
+  await apiRequest('/auth/change-password', {
+    method: 'PATCH',
+    body: JSON.stringify({ currentPassword, newPassword })
+  })
+  clearSession()
   return true
+}
+
+export async function requestPasswordReset(email) {
+  const data = await apiRequest('/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email })
+  })
+  return { email, resetToken: data.otp || data.resetToken, ...data }
+}
+
+export async function resetPasswordWithToken(email, token, newPassword, confirmPassword) {
+  if (newPassword !== confirmPassword) throw new Error('Mật khẩu nhập lại chưa khớp')
+  await apiRequest('/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ email, otp: token, token, newPassword })
+  })
+  return true
+}
+
+export async function logoutUser() {
+  const session = getCurrentSession()
+  if (session?.refreshToken) {
+    await apiRequest('/auth/logout', {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken: session.refreshToken })
+    }).catch(() => null)
+  }
+  clearSession()
 }

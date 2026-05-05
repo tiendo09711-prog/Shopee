@@ -9,15 +9,31 @@ export function OrderProvider({ children }) {
   const { user } = useAuth()
   const { addNotification } = useNotifications()
   const [orders, setOrders] = useState([])
+  const [ordersLoading, setOrdersLoading] = useState(false)
+
+  const reloadOrders = async () => {
+    if (!user?.id) {
+      setOrders([])
+      return []
+    }
+    setOrdersLoading(true)
+    try {
+      const nextOrders = await getOrdersByUser(user.id)
+      setOrders(nextOrders)
+      return nextOrders
+    } finally {
+      setOrdersLoading(false)
+    }
+  }
 
   useEffect(() => {
-    setOrders(getOrdersByUser(user?.id))
+    reloadOrders().catch(() => setOrders([]))
   }, [user])
 
-  const placeOrdersFromCheckout = (payload) => {
+  const placeOrdersFromCheckout = async (payload) => {
     if (!user?.id || !payload?.items?.length) return []
-    const created = createOrdersFromCheckout(user.id, payload)
-    setOrders(getOrdersByUser(user.id))
+    const created = await createOrdersFromCheckout(user.id, payload)
+    await reloadOrders()
     addNotification({
       type: 'order',
       title: 'Đặt hàng thành công',
@@ -26,15 +42,15 @@ export function OrderProvider({ children }) {
     return created
   }
 
-  const changeOrderStatus = (orderId, status, title = 'Cập nhật đơn hàng') => {
+  const changeOrderStatus = async (orderId, status, title = 'Cập nhật đơn hàng') => {
     if (!user?.id) return null
-    const updated = updateOrderStatus(user.id, orderId, status)
-    setOrders(getOrdersByUser(user.id))
+    const updated = await updateOrderStatus(user.id, orderId, status)
+    await reloadOrders()
     if (updated) {
       addNotification({
         type: 'order',
         title,
-        message: `Đơn ${updated.name} đã chuyển sang trạng thái ${updated.status}.`
+        message: `Đơn ${updated.orderCode || updated.name} đã chuyển sang trạng thái ${updated.status}.`
       })
     }
     return updated
@@ -42,9 +58,11 @@ export function OrderProvider({ children }) {
 
   const value = useMemo(() => ({
     orders,
+    ordersLoading,
+    reloadOrders,
     placeOrdersFromCheckout,
     changeOrderStatus
-  }), [orders])
+  }), [orders, ordersLoading])
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>
 }

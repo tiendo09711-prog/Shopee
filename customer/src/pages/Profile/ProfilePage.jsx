@@ -34,10 +34,14 @@ function ProfilePage() {
     reader.readAsDataURL(file)
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    updateProfile(form)
-    alert('Lưu hồ sơ thành công')
+    try {
+      await updateProfile(form)
+      alert('Lưu hồ sơ thành công')
+    } catch (error) {
+      alert(error.message)
+    }
   }
 
   return (
