@@ -17,6 +17,13 @@ const sellerSchema = new mongoose.Schema({
   slug: { type: String, unique: true, trim: true },
   email: { type: String, lowercase: true, trim: true },
   phone: { type: String, trim: true },
+  sellerFullName: { type: String, trim: true },
+  birthDate: Date,
+  saleCategory: {
+    id: String,
+    name: String,
+    slug: String
+  },
   logo: { type: String, default: '' },
   coverImage: { type: String, default: '' },
   description: { type: String, default: '' },

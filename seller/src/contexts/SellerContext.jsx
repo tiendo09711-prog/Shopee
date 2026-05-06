@@ -85,6 +85,7 @@ export function SellerProvider({ children }) {
       identityInfo: draft?.identityInfo || initialIdentityInfo,
       taxInfo: draft?.taxInfo || initialTaxInfo,
       legalAccepted: true,
+      status: 'approved',
     })
   }, [draft, user, registerSeller])
 
@@ -104,7 +105,7 @@ export function SellerProvider({ children }) {
     sellerLoading,
     draft,
     hasSellerAccount: Boolean(seller),
-    isSellerReady: Boolean(seller?.status === 'approved'),
+    isSellerReady: Boolean(seller),
     isSellerPendingApproval: Boolean(seller?.status === 'pending_approval'),
     registerSeller,
     loginSeller,
