@@ -1,9 +1,0 @@
-.user-sidebar { width:240px; }
-.user-sidebar-top { padding:18px; display:flex; align-items:center; gap:12px; margin-bottom:16px; }
-.user-sidebar-avatar { width:48px; height:48px; border-radius:50%; object-fit:cover; }
-.user-sidebar-avatar.placeholder { display:grid; place-items:center; background:#f2f2f2; font-size:26px; }
-.user-sidebar-name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.user-sidebar-menu { display:flex; flex-direction:column; }
-.user-sidebar-menu a { padding:14px 18px; color:#444; border-left:3px solid transparent; }
-.user-sidebar-menu a.active { color:var(--shopee-orange); border-left-color:var(--shopee-orange); background:#fff7f3; }
-@media (max-width: 900px) { .user-sidebar { width:100%; } }
