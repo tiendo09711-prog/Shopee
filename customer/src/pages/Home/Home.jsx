@@ -154,14 +154,14 @@ function Home() {
     return (
       <div className="home-pagination card">
         <div className="home-page-size">
-          <span>Hien thi</span>
+          <span>Hiển thị</span>
           <select value={filters.pageSize} onChange={(e) => handleChangeFilter('pageSize', Number(e.target.value))}>
             {PAGE_SIZE_VALUES.map((value) => <option key={value} value={value}>{value}</option>)}
           </select>
           <span>/ trang</span>
         </div>
         <div className="home-page-controls">
-          <button type="button" disabled={currentPage <= 1} onClick={() => handleChangeFilter('page', currentPage - 1)}>Truoc</button>
+          <button type="button" disabled={currentPage <= 1} onClick={() => handleChangeFilter('page', currentPage - 1)}>Trước</button>
           {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
             <button key={page} type="button" className={page === currentPage ? 'active' : ''} onClick={() => handleChangeFilter('page', page)}>
               {page}
@@ -178,7 +178,7 @@ function Home() {
       <Banner />
       <section className="container home-highlight-row">
         <div className="home-voucher-card">
-          <h3>Voucher hom nay</h3>
+          <h3>Voucher hôm nay</h3>
           <div className="home-voucher-list">
             {vouchers.map((voucher) => (
               <div key={voucher.code} className="home-voucher-item">
@@ -189,7 +189,7 @@ function Home() {
           </div>
         </div>
         <div className="home-hot-keywords-card">
-          <h3>Tim kiem noi bat</h3>
+          <h3>Tìm kiếm nổi bật</h3>
           <div className="home-hot-keywords">
             {hotKeywords.map((keyword) => (
               <Link key={keyword} to={`/?keyword=${encodeURIComponent(keyword)}`}>{keyword}</Link>
@@ -203,9 +203,9 @@ function Home() {
       <section className="container page-spacing home-content">
         <FilterSidebar categories={categories} filters={filters} onChange={handleChangeFilter} onReset={handleReset} />
         <div className="home-product-area">
-          {filters.keyword ? <div className="search-notice card">Ket qua cho tu khoa: <strong>{filters.keyword}</strong></div> : null}
+          {filters.keyword ? <div className="search-notice card">Kết quả cho từ khóa: <strong>{filters.keyword}</strong></div> : null}
           {error ? <div className="empty-message card">{error}</div> : null}
-          {loading ? <div className="empty-message card">Dang tai san pham...</div> : null}
+          {loading ? <div className="empty-message card">Đang tải sản phẩm...</div> : null}
           {!loading && !error && products.length > 0 ? (
             <>
               <ProductGrid products={products} totalCount={pagination.total} currentPage={currentPage} pageCount={pageCount} />
@@ -214,9 +214,9 @@ function Home() {
           ) : null}
           {!loading && !error && products.length === 0 ? (
             <div className="home-empty-wrap">
-              <div className="empty-message">Khong tim thay ket qua phu hop</div>
+              <div className="empty-message">Không tìm thấy kết quả phù hợp</div>
               <section className="home-suggestion-section">
-                <h3>Goi y san pham ban chay</h3>
+                <h3>Gợi ý sản phẩm bán chạy</h3>
                 <div className="home-suggestion-grid">
                   {bestSellerSuggestions.map((product) => <ProductCard key={product.id} product={product} />)}
                 </div>

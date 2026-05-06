@@ -32,13 +32,13 @@ function AdminCategories() {
   }
 
   const save = async () => {
-    if (!form.name.trim()) return setMessage('Ten danh muc khong duoc de trong.')
+    if (!form.name.trim()) return setMessage('Tên danh mục không được để trống.')
     if (!editingId && categories.some((item) => item.name.toLowerCase() === form.name.trim().toLowerCase())) {
-      return setMessage('Ten danh muc da ton tai.')
+      return setMessage('Tên danh mục đã tồn tại.')
     }
     try {
       await saveCategory({ id: editingId || undefined, name: form.name.trim(), description: form.description.trim(), status: 'active' })
-      setMessage(editingId ? 'Da cap nhat danh muc.' : 'Da them danh muc.')
+      setMessage(editingId ? 'Đã cập nhật danh mục.' : 'Đã thêm danh mục.')
       resetForm()
       await reload()
     } catch (err) {
@@ -62,39 +62,39 @@ function AdminCategories() {
   }
 
   const remove = async (category) => {
-    if (category.productsCount > 0) return setMessage('Khong the xoa danh muc dang co san pham.')
+    if (category.productsCount > 0) return setMessage('Không thể xóa danh mục đang có sản phẩm.')
     try {
       await deleteCategory(category._id || category.id)
-      setMessage('Da xoa danh muc.')
+      setMessage('Đã xóa danh mục.')
       await reload()
     } catch (err) {
       setMessage(err.message)
     }
   }
 
-  if (loading) return <div className="admin-page"><div style={{ padding: 32 }}>Dang tai...</div></div>
+  if (loading) return <div className="admin-page"><div style={{ padding: 32 }}>Đang tải...</div></div>
 
   return (
     <div className="admin-page">
-      <header className="admin-hero"><p className="admin-eyebrow">UC-16</p><h1>Quan ly danh muc</h1></header>
+      <header className="admin-hero"><p className="admin-eyebrow">UC-16</p><h1>Quản lý danh mục</h1></header>
       <section className="admin-panel">
         <div className="admin-form-row">
-          <input className="admin-search-input" placeholder="Tim danh muc" value={filters.keyword} onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))} />
+          <input className="admin-search-input" placeholder="Tìm danh mục" value={filters.keyword} onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))} />
           <select className="admin-search-input" value={filters.status} onChange={(e) => setFilters((prev) => ({ ...prev, status: e.target.value }))}>
-            <option value="">Tat ca trang thai</option>
+            <option value="">Tất cả trạng thái</option>
             <option value="active">active</option>
             <option value="hidden">hidden</option>
           </select>
         </div>
         <div className="admin-form-row">
-          <input className="admin-search-input" placeholder="Ten danh muc" value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} />
-          <input className="admin-search-input" placeholder="Mo ta" value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} />
-          <button className="admin-primary-btn" onClick={save}>{editingId ? 'Luu' : 'Them'}</button>
-          {editingId ? <button className="admin-table-btn" onClick={resetForm}>Huy</button> : null}
+          <input className="admin-search-input" placeholder="Tên danh mục" value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} />
+          <input className="admin-search-input" placeholder="Mô tả" value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} />
+          <button className="admin-primary-btn" onClick={save}>{editingId ? 'Lưu' : 'Thêm'}</button>
+          {editingId ? <button className="admin-table-btn" onClick={resetForm}>Hủy</button> : null}
         </div>
         {message ? <div className="admin-message">{message}</div> : null}
         <table className="admin-table">
-          <thead><tr><th>Ten</th><th>Mo ta</th><th>Trang thai</th><th>San pham</th><th>Thao tac</th></tr></thead>
+          <thead><tr><th>Tên</th><th>Mô tả</th><th>Trạng thái</th><th>Sản phẩm</th><th>Thao tác</th></tr></thead>
           <tbody>
             {rows.map((category) => (
               <tr key={category._id || category.id}>
@@ -103,9 +103,9 @@ function AdminCategories() {
                 <td>{category.status}</td>
                 <td>{category.productsCount}</td>
                 <td>
-                  <button className="admin-table-btn" onClick={() => edit(category)}>Sua</button>
-                  <button className="admin-table-btn" onClick={() => toggle(category)}>{category.status === 'hidden' ? 'Hien' : 'An'}</button>
-                  <button className="admin-table-btn" onClick={() => remove(category)}>Xoa</button>
+                  <button className="admin-table-btn" onClick={() => edit(category)}>Sửa</button>
+                  <button className="admin-table-btn" onClick={() => toggle(category)}>{category.status === 'hidden' ? 'Hiện' : 'Ẩn'}</button>
+                  <button className="admin-table-btn" onClick={() => remove(category)}>Xóa</button>
                 </td>
               </tr>
             ))}

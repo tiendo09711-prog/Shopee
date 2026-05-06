@@ -22,8 +22,5 @@ router.get('/seller/orders/:id', authRequired, requireApprovedSeller, sellerCont
 router.patch('/seller/orders/:id/status', authRequired, requireApprovedSeller, sellerController.updateOrderStatus)
 
 router.get('/seller/stats/dashboard', authRequired, requireApprovedSeller, sellerController.dashboard)
-router.get('/seller/stats/revenue', authRequired, requireApprovedSeller, sellerController.dashboard)
-router.get('/seller/stats/top-products', authRequired, requireApprovedSeller, sellerController.dashboard)
-router.get('/seller/stats/orders-by-status', authRequired, requireApprovedSeller, sellerController.dashboard)
 
 export default router

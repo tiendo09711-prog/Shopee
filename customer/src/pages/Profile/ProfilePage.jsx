@@ -28,11 +28,11 @@ function ProfilePage() {
     const file = event.target.files?.[0]
     if (!file) return
     if (!file.type.startsWith('image/')) {
-      alert('File avatar pháº£i lÃ  áº£nh.')
+      alert('File avatar phải là ảnh.')
       return
     }
     if (file.size > 1024 * 1024) {
-      alert('Dung lÆ°á»£ng avatar tá»‘i Ä‘a 1 MB.')
+      alert('Dung lượng avatar tối đa 1 MB.')
       return
     }
     updateAvatar(file)

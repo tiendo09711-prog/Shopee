@@ -20,36 +20,36 @@ function AdminDashboard() {
       .finally(() => setLoading(false))
   }, [filters])
 
-  if (loading) return <div className="admin-page"><div style={{ padding: 32 }}>Dang tai du lieu...</div></div>
+  if (loading) return <div className="admin-page"><div style={{ padding: 32 }}>Đang tải dữ liệu...</div></div>
 
   return (
     <div className="admin-page">
-      <header className="admin-hero"><p className="admin-eyebrow">Dashboard</p><h1>Tong quan PShop</h1><p className="admin-hero-copy">So lieu thuc tu MongoDB database.</p></header>
+      <header className="admin-hero"><p className="admin-eyebrow">Dashboard</p><h1>Tổng quan PShop</h1><p className="admin-hero-copy">Số liệu thực từ MongoDB database.</p></header>
       <section className="admin-panel">
         <div className="admin-form-row">
           <select className="admin-search-input" value={filters.range} onChange={(e) => setFilters((prev) => ({ ...prev, range: e.target.value }))}>
-            <option value="7">7 ngay</option>
-            <option value="30">30 ngay</option>
-            <option value="all">Tat ca</option>
+            <option value="7">7 ngày</option>
+            <option value="30">30 ngày</option>
+            <option value="all">Tất cả</option>
           </select>
           <input className="admin-search-input" type="date" value={filters.from} onChange={(e) => setFilters((prev) => ({ ...prev, from: e.target.value }))} />
           <input className="admin-search-input" type="date" value={filters.to} onChange={(e) => setFilters((prev) => ({ ...prev, to: e.target.value }))} />
         </div>
       </section>
       <section className="admin-summary-grid">
-        <article className="admin-card"><span>Doanh thu hom nay</span><strong>{formatCurrency(stats.revenueToday)}</strong></article>
-        <article className="admin-card"><span>Tong doanh thu</span><strong>{formatCurrency(stats.revenue)}</strong></article>
-        <article className="admin-card"><span>Tong don</span><strong>{stats.totalOrders}</strong></article>
-        <article className="admin-card"><span>Don cho xu ly</span><strong>{stats.pendingOrders}</strong></article>
+        <article className="admin-card"><span>Doanh thu hôm nay</span><strong>{formatCurrency(stats.revenueToday)}</strong></article>
+        <article className="admin-card"><span>Tổng doanh thu</span><strong>{formatCurrency(stats.revenue)}</strong></article>
+        <article className="admin-card"><span>Tổng đơn</span><strong>{stats.totalOrders}</strong></article>
+        <article className="admin-card"><span>Đơn chờ xử lý</span><strong>{stats.pendingOrders}</strong></article>
         <article className="admin-card"><span>Customer</span><strong>{stats.customers}</strong></article>
         <article className="admin-card"><span>Seller</span><strong>{stats.sellers}</strong></article>
-        <article className="admin-card"><span>Active products</span><strong>{stats.activeProducts}</strong></article>
-        <article className="admin-card"><span>Pending products</span><strong>{stats.pendingProducts}</strong></article>
+        <article className="admin-card"><span>Sản phẩm đang bán</span><strong>{stats.activeProducts}</strong></article>
+        <article className="admin-card"><span>Sản phẩm chờ duyệt</span><strong>{stats.pendingProducts}</strong></article>
       </section>
       <section className="admin-panel">
-        <h2>Top san pham theo doanh thu</h2>
+        <h2>Top sản phẩm theo doanh thu</h2>
         <table className="admin-table">
-          <thead><tr><th>San pham</th><th>Da ban</th><th>Doanh thu</th></tr></thead>
+          <thead><tr><th>Sản phẩm</th><th>Đã bán</th><th>Doanh thu</th></tr></thead>
           <tbody>
             {(stats.topProducts || []).map((item) => (
               <tr key={item.product}><td>{item.name}</td><td>{item.quantity}</td><td>{formatCurrency(item.revenue)}</td></tr>

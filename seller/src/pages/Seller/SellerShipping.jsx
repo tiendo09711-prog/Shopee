@@ -8,14 +8,35 @@ function SellerShipping() {
       <section className="seller-panel">
         <h1 className="seller-page-title">Cài đặt vận chuyển</h1>
         <div className="seller-mini-grid">
-          {seller?.shippingSettings?.map((item) => (
+          {seller?.shippingSettings?.length > 0 ? seller.shippingSettings.map((item) => (
             <div key={item.id} className="seller-info-card">
               <h4>{item.title}</h4>
               <div>Đang bật: {item.active ? 'Có' : 'Không'}</div>
               <div>COD: {item.cod ? 'Có' : 'Không'}</div>
               <div>Nhóm: {item.group}</div>
             </div>
-          ))}
+          )) : (
+            <>
+              <div className="seller-info-card">
+                <h4>Shopee Express</h4>
+                <div>Đang bật: Có</div>
+                <div>COD: Có</div>
+                <div>Nhóm: Nhanh</div>
+              </div>
+              <div className="seller-info-card">
+                <h4>Giao hàng tiết kiệm</h4>
+                <div>Đang bật: Có</div>
+                <div>COD: Có</div>
+                <div>Nhóm: Tiết kiệm</div>
+              </div>
+              <div className="seller-info-card">
+                <h4>Giao hàng nhanh</h4>
+                <div>Đang bật: Có</div>
+                <div>COD: Có</div>
+                <div>Nhóm: Nhanh</div>
+              </div>
+            </>
+          )}
         </div>
       </section>
     </SellerDashboardLayout>
