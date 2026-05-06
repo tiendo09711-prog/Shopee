@@ -135,6 +135,9 @@ export const sellerSidebarSections = [
   },
   {
     title: 'Chăm sóc khách hàng',
-    items: [{ label: 'Trung Tâm Hỗ Trợ', path: '/seller/support' }],
+    items: [
+      { label: 'Chat với Khách Hàng', path: '/seller/chat' },
+      { label: 'Trung Tâm Hỗ Trợ', path: '/seller/support' },
+    ],
   },
 ]

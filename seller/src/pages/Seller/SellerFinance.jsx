@@ -1,22 +1,60 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import SellerDashboardLayout from '../../layout/SellerDashboardLayout'
 import { useSeller } from '../../contexts/SellerContext'
-import { exportSellerOrdersCsv, getSellerAnalytics } from '../../services/sellerAnalytics.service'
+import { getSellerAnalytics } from '../../services/sellerAnalytics.service'
 import { formatCurrency } from '../../utils/formatCurrency'
+
+const emptyStats = {
+  revenue: 0, completedOrders: [], topProducts: [],
+}
 
 function SellerFinance() {
   const { seller } = useSeller()
   const [range, setRange] = useState('30')
-  const stats = useMemo(() => getSellerAnalytics(seller.id, range), [range, seller.id])
-  const platformFee = Math.round(stats.revenue * 0.03)
+  const [stats, setStats] = useState(emptyStats)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (!seller?.id && !seller?._id) return
+    setLoading(true)
+    setError('')
+    getSellerAnalytics(seller._id || seller.id, range)
+      .then((data) => setStats({ ...emptyStats, ...data }))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false))
+  }, [seller, range])
+
+  const platformFee = Math.round((stats.revenue || 0) * 0.03)
+  const profit = (stats.revenue || 0) - platformFee
 
   const handleExport = () => {
-    const csv = exportSellerOrdersCsv(seller.id, range)
-    window.alert(`CSV mock:\n${csv}`)
+    const rows = [
+      ['Sản phẩm', 'Số lượng', 'Doanh thu'],
+      ...(stats.topProducts || []).map((p) => [p.name, p.quantity, p.revenue]),
+    ]
+    const csv = rows.map((r) => r.join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `finance_${range}days.csv`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
+  const rightbar = (
+    <div>
+      <h3>Ví PShop</h3>
+      <p className="seller-muted">Phí sàn: 3% doanh thu</p>
+      <p className="seller-muted">Số dư tạm tính: <strong>{formatCurrency(Math.max(0, profit))}</strong></p>
+    </div>
+  )
+
+  if (loading) return <SellerDashboardLayout rightbar={rightbar}><div style={{ padding: 32 }}>Đang tải dữ liệu tài chính...</div></SellerDashboardLayout>
+
   return (
-    <SellerDashboardLayout rightbar={<div><h3>Ví PShop mock</h3><p className="seller-muted">Số dư khả dụng: {formatCurrency(Math.max(0, stats.revenue - platformFee))}</p></div>}>
+    <SellerDashboardLayout rightbar={rightbar}>
       <section className="seller-panel">
         <div className="seller-page-head">
           <h1 className="seller-page-title">Tài chính</h1>
@@ -26,20 +64,36 @@ function SellerFinance() {
               <option value="30">30 ngày</option>
               <option value="all">Tất cả</option>
             </select>
-            <button type="button" onClick={handleExport}>Export CSV</button>
+            <button type="button" className="seller-primary-btn" onClick={handleExport}>Export CSV</button>
           </div>
         </div>
+
+        {error ? <div className="status-message text-danger">{error}</div> : null}
+
         <div className="seller-stats-grid">
           <div className="seller-stat-card"><h4>Doanh thu tổng</h4><div className="seller-big-number">{formatCurrency(stats.revenue)}</div></div>
-          <div className="seller-stat-card"><h4>Đơn hoàn thành</h4><div className="seller-big-number">{stats.completedOrders.length}</div></div>
-          <div className="seller-stat-card"><h4>Phí sàn mock</h4><div className="seller-big-number">{formatCurrency(platformFee)}</div></div>
-          <div className="seller-stat-card"><h4>Lợi nhuận tạm tính</h4><div className="seller-big-number">{formatCurrency(stats.revenue - platformFee)}</div></div>
+          <div className="seller-stat-card"><h4>Đơn hoàn thành</h4><div className="seller-big-number">{(stats.completedOrders || []).length}</div></div>
+          <div className="seller-stat-card"><h4>Phí sàn (3%)</h4><div className="seller-big-number">{formatCurrency(platformFee)}</div></div>
+          <div className="seller-stat-card"><h4>Lợi nhuận tạm tính</h4><div className="seller-big-number">{formatCurrency(profit)}</div></div>
         </div>
+
         <h3>Doanh thu theo sản phẩm</h3>
-        <table className="seller-table">
-          <thead><tr><th>Sản phẩm</th><th>Đã bán</th><th>Doanh thu</th></tr></thead>
-          <tbody>{stats.topProducts.map((item) => <tr key={item.id}><td>{item.name}</td><td>{item.quantity}</td><td>{formatCurrency(item.revenue)}</td></tr>)}</tbody>
-        </table>
+        {(stats.topProducts || []).length === 0 ? (
+          <p className="seller-muted">Chưa có dữ liệu doanh thu trong khoảng thời gian này.</p>
+        ) : (
+          <table className="seller-table">
+            <thead><tr><th>Sản phẩm</th><th>Đã bán</th><th>Doanh thu</th></tr></thead>
+            <tbody>
+              {(stats.topProducts || []).map((item) => (
+                <tr key={item.id || item._id}>
+                  <td>{item.name}</td>
+                  <td>{item.quantity}</td>
+                  <td>{formatCurrency(item.revenue)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </section>
     </SellerDashboardLayout>
   )

@@ -13,7 +13,7 @@ function AdminSellers() {
   }
 
   useEffect(() => {
-    reload().catch(() => {}).finally(() => setLoading(false))
+    reload().catch((err) => setMessage(`Lỗi tải dữ liệu: ${err.message}`)).finally(() => setLoading(false))
   }, [])
 
   const filtered = useMemo(() => sellers.filter((s) => !statusFilter || s.status === statusFilter), [sellers, statusFilter])

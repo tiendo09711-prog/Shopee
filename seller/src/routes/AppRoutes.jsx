@@ -18,6 +18,7 @@ import SellerShipping from '../pages/Seller/SellerShipping'
 import SellerFinance from '../pages/Seller/SellerFinance'
 import SellerDataCenter from '../pages/Seller/SellerDataCenter'
 import SellerSupport from '../pages/Seller/SellerSupport'
+import SellerChat from '../pages/Seller/SellerChat'
 import SellerMarketing from '../pages/Seller/SellerMarketing'
 import SellerPlaceholder from '../pages/Seller/SellerPlaceholder'
 import { useAuth } from '../contexts/AuthContext'
@@ -76,6 +77,7 @@ function AppRoutes() {
       <Route path="/seller/shipping/bulk" element={<RequireSellerAuth><RequireSellerReady><SellerPlaceholder title="Giao hàng loạt" /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/finance" element={<RequireSellerAuth><RequireSellerReady><SellerFinance /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/data" element={<RequireSellerAuth><RequireSellerReady><SellerDataCenter /></RequireSellerReady></RequireSellerAuth>} />
+      <Route path="/seller/chat" element={<RequireSellerAuth><RequireSellerReady><SellerChat /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/support" element={<RequireSellerAuth><RequireSellerReady><SellerSupport /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/marketing" element={<RequireSellerAuth><RequireSellerReady><SellerMarketing /></RequireSellerReady></RequireSellerAuth>} />
       <Route path="/seller/notifications" element={<RequireSellerAuth><RequireSellerReady><SellerPlaceholder title="Thông báo" /></RequireSellerReady></RequireSellerAuth>} />

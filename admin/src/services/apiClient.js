@@ -42,6 +42,15 @@ export async function apiRequest(path, options = {}) {
   const response = await fetch(`${API_BASE_URL}${path}`, { ...options, headers })
   const payload = await response.json().catch(() => ({}))
 
+  // Token hết hạn hoặc không hợp lệ → xóa session và về trang login
+  if (response.status === 401) {
+    removeAdminSession()
+    if (!window.location.pathname.includes('/login')) {
+      window.location.href = '/login'
+    }
+    throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.')
+  }
+
   if (!response.ok || payload.success === false) {
     throw new Error(payload.message || 'Không thể kết nối API')
   }

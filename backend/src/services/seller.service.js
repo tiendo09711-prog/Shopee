@@ -151,22 +151,62 @@ export async function changeOrderStatus(seller, user, orderId, nextStatus, note 
   return updateOrderStatus(user, orderId, nextStatus, note)
 }
 
-export async function getDashboard(sellerId) {
-  const [products, orders] = await Promise.all([
+export async function getDashboard(sellerId, range = '30') {
+  const [products, allOrders] = await Promise.all([
     Product.find({ seller: sellerId }).lean(),
     Order.find({ seller: sellerId }).lean()
   ])
-  const completed = orders.filter((order) => order.status === 'completed')
-  const revenue = completed.reduce((sum, order) => sum + Number(order.total || 0), 0)
+
+  // Filter orders by range
+  let orders = allOrders
+  if (range !== 'all') {
+    const days = Number(range) || 30
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+    orders = allOrders.filter((o) => new Date(o.createdAt) >= since)
+  }
+
+  const today = new Date().toDateString()
+  const completed = orders.filter((o) => o.status === 'completed')
+  const revenue = completed.reduce((sum, o) => sum + Number(o.total || 0), 0)
+  const revenueToday = allOrders
+    .filter((o) => o.status === 'completed' && new Date(o.createdAt).toDateString() === today)
+    .reduce((sum, o) => sum + Number(o.total || 0), 0)
+
+  // topProducts: aggregate sold quantity and revenue from completed orders
+  const productSaleMap = {}
+  completed.forEach((order) => {
+    ;(order.items || []).forEach((item) => {
+      const pid = String(item.product || item._id || '')
+      if (!pid) return
+      if (!productSaleMap[pid]) productSaleMap[pid] = { quantity: 0, revenue: 0, name: item.name || '' }
+      productSaleMap[pid].quantity += Number(item.quantity || 1)
+      productSaleMap[pid].revenue += Number(item.price || 0) * Number(item.quantity || 1)
+    })
+  })
+
+  const topProducts = products
+    .map((p) => {
+      const pid = String(p._id)
+      const sale = productSaleMap[pid] || { quantity: 0, revenue: 0 }
+      return { id: pid, _id: pid, name: p.name, quantity: sale.quantity, revenue: sale.revenue, price: p.price, stock: p.stock }
+    })
+    .sort((a, b) => b.quantity - a.quantity)
+    .slice(0, 10)
+
+  const statusCounts = orders.reduce((acc, o) => ({ ...acc, [o.status]: (acc[o.status] || 0) + 1 }), {})
+  const conversion = orders.length ? Math.round((completed.length / orders.length) * 100) : 0
+
   return {
     revenue,
-    revenueToday: completed.filter((order) => new Date(order.createdAt).toDateString() === new Date().toDateString()).reduce((sum, order) => sum + Number(order.total || 0), 0),
-    newOrders: orders.filter((order) => new Date(order.createdAt).toDateString() === new Date().toDateString()).length,
-    pending: orders.filter((order) => order.status === 'pending').length,
-    shipping: orders.filter((order) => order.status === 'shipping').length,
+    revenueToday,
+    newOrders: allOrders.filter((o) => new Date(o.createdAt).toDateString() === today).length,
+    pending: allOrders.filter((o) => o.status === 'pending').length,
+    shipping: allOrders.filter((o) => o.status === 'shipping').length,
     products,
     orders,
-    statusCounts: orders.reduce((acc, order) => ({ ...acc, [order.status]: (acc[order.status] || 0) + 1 }), {}),
-    topProducts: products.sort((a, b) => Number(b.sold || 0) - Number(a.sold || 0)).slice(0, 5)
+    completedOrders: completed,
+    statusCounts,
+    topProducts,
+    conversion,
   }
 }

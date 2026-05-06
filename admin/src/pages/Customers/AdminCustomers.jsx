@@ -13,7 +13,7 @@ function AdminCustomers() {
   }
 
   useEffect(() => {
-    reload().catch(() => {}).finally(() => setLoading(false))
+    reload().catch((err) => setMessage(`Lỗi tải dữ liệu: ${err.message}`)).finally(() => setLoading(false))
   }, [])
 
   const customers = useMemo(() => users.filter((user) => {

@@ -4,6 +4,7 @@ import adminRoutes from './admin.routes.js'
 import authRoutes from './auth.routes.js'
 import cartRoutes from './cart.routes.js'
 import categoryRoutes from './category.routes.js'
+import chatRoutes from './chat.routes.js'
 import notificationRoutes from './notification.routes.js'
 import orderRoutes from './order.routes.js'
 import productRoutes from './product.routes.js'
@@ -29,6 +30,7 @@ router.use('/reviews', reviewRoutes)
 router.use('/refunds', refundRoutes)
 router.use('/reports', reportRoutes)
 router.use('/notifications', notificationRoutes)
+router.use('/chat', chatRoutes)
 router.use('/', sellerRoutes)
 router.use('/admin', adminRoutes)
 

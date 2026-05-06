@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { getAdminSession, loginAdmin, logoutAdmin } from '../services/adminAuth.service'
+import { getAdminSession, loginAdmin, logoutAdmin, removeAdminSession } from '../services/adminAuth.service'
 
 const AdminAuthContext = createContext(null)
 
@@ -9,7 +9,13 @@ export function AdminAuthProvider({ children }) {
 
   useEffect(() => {
     const existing = getAdminSession()
-    if (existing?.user) setSession(existing)
+    // Validate session có đúng format mới (phải có accessToken JWT thật)
+    if (existing?.user && existing?.accessToken) {
+      setSession(existing)
+    } else if (existing) {
+      // Session cũ format sai → xóa để buộc đăng nhập lại
+      removeAdminSession()
+    }
     setLoading(false)
   }, [])
 

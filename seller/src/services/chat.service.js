@@ -1,44 +1,19 @@
-import { getStorageValue, setStorageValue } from '../utils/storage'
-import { getShopById } from './shop.service'
+import { apiRequest } from './apiClient'
 
-const CHAT_KEY = 'shopee_clone_chat_threads'
-
-function getAllThreads() {
-  return getStorageValue(CHAT_KEY, {})
+// Lấy tất cả chat threads của seller
+export async function getSellerChatThreads() {
+  return apiRequest('/chat/threads')
 }
 
-function saveAllThreads(data) {
-  setStorageValue(CHAT_KEY, data)
+// Lấy messages của một thread
+export async function getThreadMessages(threadId) {
+  return apiRequest(`/chat/threads/${threadId}`)
 }
 
-export function getMessagesByUserAndShop(userId, shopId) {
-  if (!userId || !shopId) return []
-  const key = `${userId}_${shopId}`
-  return getAllThreads()[key] || []
-}
-
-export function sendMessageToShop(userId, shopId, content) {
-  if (!userId || !shopId || !content.trim()) return []
-  const key = `${userId}_${shopId}`
-  const all = getAllThreads()
-  const current = all[key] || []
-  const store = getShopById(shopId)
-
-  const userMessage = {
-    id: `msg_${Date.now()}_u`,
-    sender: 'user',
-    content: content.trim(),
-    createdAt: new Date().toISOString()
-  }
-
-  const reply = {
-    id: `msg_${Date.now()}_s`,
-    sender: 'shop',
-    content: `Shop ${store?.name || ''} đã nhận tin nhắn: "${content.trim()}". Bên mình sẽ phản hồi thêm trong ít phút.`,
-    createdAt: new Date(Date.now() + 1000).toISOString()
-  }
-
-  all[key] = [...current, userMessage, reply]
-  saveAllThreads(all)
-  return all[key]
+// Seller reply vào thread
+export async function replyToThread(threadId, content) {
+  return apiRequest(`/chat/threads/${threadId}/reply`, {
+    method: 'POST',
+    body: JSON.stringify({ content }),
+  })
 }

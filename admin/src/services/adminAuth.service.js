@@ -1,6 +1,6 @@
 import { apiRequest, getAdminSession, removeAdminSession, setAdminSession } from './apiClient'
 
-export { getAdminSession }
+export { getAdminSession, removeAdminSession }
 
 export async function loginAdmin(email, password) {
   const normalizedEmail = email.toLowerCase().trim()
