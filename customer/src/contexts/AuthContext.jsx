@@ -9,7 +9,8 @@ import {
   registerUser,
   requestPasswordReset,
   resetPasswordWithToken,
-  updateUserProfile
+  updateUserProfile,
+  uploadUserAvatar
 } from '../services/auth.service'
 
 const AuthContext = createContext(null)
@@ -61,6 +62,12 @@ export function AuthProvider({ children }) {
     return updatedUser
   }
 
+  const updateAvatar = async (file) => {
+    const updatedUser = await uploadUserAvatar(file)
+    setUser(updatedUser)
+    return updatedUser
+  }
+
   const changePassword = async (currentPassword, newPassword, confirmPassword) => {
     await changeUserPassword(user.id, currentPassword, newPassword, confirmPassword)
     setUser(null)
@@ -75,6 +82,7 @@ export function AuthProvider({ children }) {
     register,
     logout,
     updateProfile,
+    updateAvatar,
     changePassword,
     requestPasswordReset,
     resetPassword: resetPasswordWithToken

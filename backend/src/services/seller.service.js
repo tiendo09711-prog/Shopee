@@ -151,7 +151,7 @@ export async function changeOrderStatus(seller, user, orderId, nextStatus, note 
   return updateOrderStatus(user, orderId, nextStatus, note)
 }
 
-export async function getDashboard(sellerId, range = '30') {
+export async function getDashboard(sellerId, range = '30', query = {}) {
   const [products, allOrders] = await Promise.all([
     Product.find({ seller: sellerId }).lean(),
     Order.find({ seller: sellerId }).lean()
@@ -159,7 +159,14 @@ export async function getDashboard(sellerId, range = '30') {
 
   // Filter orders by range
   let orders = allOrders
-  if (range !== 'all') {
+  if (query.from || query.to) {
+    orders = allOrders.filter((o) => {
+      const created = new Date(o.createdAt).getTime()
+      const afterFrom = query.from ? created >= new Date(query.from).getTime() : true
+      const beforeTo = query.to ? created <= new Date(query.to).getTime() : true
+      return afterFrom && beforeTo
+    })
+  } else if (range !== 'all') {
     const days = Number(range) || 30
     const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
     orders = allOrders.filter((o) => new Date(o.createdAt) >= since)

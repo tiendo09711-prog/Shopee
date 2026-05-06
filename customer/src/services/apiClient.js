@@ -13,6 +13,12 @@ export function getApiBaseUrl() {
   return API_BASE_URL
 }
 
+export function resolveApiAssetUrl(value = '') {
+  if (!value || value.startsWith('http') || value.startsWith('data:')) return value
+  const origin = API_BASE_URL.replace(/\/api\/?$/, '')
+  return `${origin}${value.startsWith('/') ? value : `/${value}`}`
+}
+
 export async function apiRequest(path, options = {}) {
   const session = getSession()
   const headers = {

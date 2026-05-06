@@ -186,7 +186,10 @@ export async function updateOrderStatus(actor, orderId, nextStatus, note = '') {
   order.status = nextStatus
   if (nextStatus === 'delivered') order.deliveredAt = new Date()
   if (nextStatus === 'completed') order.completedAt = new Date()
-  if (nextStatus === 'cancelled') order.cancelledAt = new Date()
+  if (nextStatus === 'cancelled') {
+    order.cancelledAt = new Date()
+    order.cancelReason = note
+  }
   order.timeline.push({
     status: nextStatus,
     label: STATUS_LABELS[nextStatus] || nextStatus,

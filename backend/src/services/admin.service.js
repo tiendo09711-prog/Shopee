@@ -1,5 +1,6 @@
 import ApiError from '../utils/apiError.js'
 import slugify from '../utils/slugify.js'
+import { buildPaginationMeta, getPagination } from '../utils/pagination.js'
 import User from '../models/User.js'
 import Seller from '../models/Seller.js'
 import Category from '../models/Category.js'
@@ -11,9 +12,33 @@ import Notification from '../models/Notification.js'
 import AuditLog from '../models/AuditLog.js'
 import { updateOrderStatus } from './order.service.js'
 
-export async function dashboard() {
+function resolveDateFilter(query = {}) {
+  const filter = {}
+  if (query.from || query.to) {
+    filter.createdAt = {}
+    if (query.from) filter.createdAt.$gte = new Date(query.from)
+    if (query.to) filter.createdAt.$lte = new Date(query.to)
+    return filter
+  }
+  if (query.range && query.range !== 'all') {
+    const days = Number(query.range)
+    if (Number.isFinite(days) && days > 0) {
+      filter.createdAt = { $gte: new Date(Date.now() - days * 24 * 60 * 60 * 1000) }
+    }
+  }
+  return filter
+}
+
+export async function dashboard(query = {}) {
+  const dateFilter = resolveDateFilter(query)
+  const orderFilter = { ...dateFilter }
+  if (query.category) {
+    const productIds = await Product.find({ category: query.category }).distinct('_id')
+    orderFilter['items.product'] = { $in: productIds }
+  }
+
   const [orders, customers, sellers, activeProducts, pendingProducts] = await Promise.all([
-    Order.find().lean(),
+    Order.find(orderFilter).lean(),
     User.countDocuments({ role: 'customer' }),
     Seller.countDocuments(),
     Product.countDocuments({ status: 'active' }),
@@ -29,12 +54,25 @@ export async function dashboard() {
     sellers,
     activeProducts,
     pendingProducts,
-    ordersByStatus: orders.reduce((acc, order) => ({ ...acc, [order.status]: (acc[order.status] || 0) + 1 }), {})
+    ordersByStatus: orders.reduce((acc, order) => ({ ...acc, [order.status]: (acc[order.status] || 0) + 1 }), {}),
+    revenueByStatus: orders.reduce((acc, order) => ({ ...acc, [order.status]: (acc[order.status] || 0) + Number(order.total || 0) }), {}),
+    topProducts: Object.values(orders.reduce((acc, order) => {
+      ;(order.items || []).forEach((item) => {
+        const key = String(item.product)
+        if (!acc[key]) acc[key] = { product: key, name: item.name, quantity: 0, revenue: 0 }
+        acc[key].quantity += Number(item.quantity || 0)
+        acc[key].revenue += Number(item.subtotal || item.price * item.quantity || 0)
+      })
+      return acc
+    }, {})).sort((a, b) => b.revenue - a.revenue).slice(0, 10)
   }
 }
 
-export async function listCategories() {
-  return Category.find().sort({ sortOrder: 1, name: 1 }).lean()
+export async function listCategories(query = {}) {
+  const filter = {}
+  if (query.status && query.status !== 'all') filter.status = query.status
+  if (query.keyword) filter.name = new RegExp(String(query.keyword).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+  return Category.find(filter).sort({ sortOrder: 1, name: 1 }).lean()
 }
 
 export async function createCategory(payload) {
@@ -65,11 +103,54 @@ export async function deleteCategory(id) {
 export async function listProducts(query = {}) {
   const filter = {}
   if (query.status && query.status !== 'all') filter.status = query.status
+  if (query.category) filter.category = query.category
+  if (query.minPrice || query.maxPrice) {
+    filter.price = {}
+    if (query.minPrice) filter.price.$gte = Number(query.minPrice)
+    if (query.maxPrice) filter.price.$lte = Number(query.maxPrice)
+  }
   if (query.keyword) filter.$or = [
     { name: new RegExp(query.keyword, 'i') },
     { sku: new RegExp(query.keyword, 'i') }
   ]
+  if (query.paginate === 'true') {
+    const { page, limit, skip } = getPagination(query)
+    const [products, total] = await Promise.all([
+      Product.find(filter).populate('seller', 'shopName status').populate('category', 'name slug').sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+      Product.countDocuments(filter)
+    ])
+    return { products, pagination: buildPaginationMeta(page, limit, total) }
+  }
   return Product.find(filter).populate('seller', 'shopName status').populate('category', 'name slug').sort({ createdAt: -1 }).lean()
+}
+
+export async function createProduct(payload) {
+  const sellerId = payload.sellerId || payload.seller
+  if (!sellerId) throw new ApiError(400, 'Seller is required')
+  const seller = await Seller.findById(sellerId)
+  if (!seller) throw new ApiError(400, 'Seller is invalid')
+  const category = await Category.findById(payload.categoryId || payload.category)
+  if (!category || category.status === 'hidden') throw new ApiError(400, 'Category is invalid')
+  if (!payload.name?.trim()) throw new ApiError(400, 'Product name is required')
+  if (Number(payload.price) < 0 || Number(payload.stock) < 0) throw new ApiError(400, 'Price and stock must not be negative')
+  if (!payload.images?.length) throw new ApiError(400, 'At least one image is required')
+
+  return Product.create({
+    seller: seller._id,
+    name: payload.name.trim(),
+    slug: payload.slug || `${slugify(payload.name)}-${Date.now().toString().slice(-5)}`,
+    sku: payload.sku || `ADMIN-${Date.now()}`,
+    category: category._id,
+    description: payload.description || '',
+    price: Number(payload.price),
+    oldPrice: Number(payload.oldPrice || payload.price || 0),
+    stock: Number(payload.stock),
+    images: payload.images,
+    attributes: payload.attributes || [],
+    variants: payload.variants || [],
+    status: payload.status || 'active',
+    priceHistory: [{ price: Number(payload.price), changedAt: new Date(), changedBy: payload.adminId }]
+  })
 }
 
 export async function updateProduct(id, payload) {

@@ -1,4 +1,4 @@
-import { apiRequest } from './apiClient'
+import { apiRequest, resolveApiAssetUrl } from './apiClient'
 import { removeStorageValue, setStorageValue } from '../utils/storage'
 
 export const SESSIONS_KEY = 'pshop_sessions'
@@ -9,7 +9,8 @@ function normalizeUser(user = {}) {
     ...user,
     id: user._id || user.id,
     address: defaultAddress?.fullAddress || user.address || '',
-    avatarThumb: user.avatar || user.avatarThumb || '',
+    avatar: resolveApiAssetUrl(user.avatar || ''),
+    avatarThumb: resolveApiAssetUrl(user.avatar || user.avatarThumb || ''),
     birthDay: user.birthDay || '1',
     birthMonth: user.birthMonth || '1',
     birthYear: user.birthYear || '1990'
@@ -80,6 +81,18 @@ export async function updateUserProfile(userId, payload) {
   return normalizeUser(user)
 }
 
+export async function uploadUserAvatar(file) {
+  const formData = new FormData()
+  formData.append('avatar', file)
+  const user = await apiRequest('/users/me/avatar', {
+    method: 'PATCH',
+    body: formData
+  })
+  const session = getCurrentSession()
+  if (session) setStorageValue(SESSIONS_KEY, { ...session, user: normalizeUser(user) })
+  return normalizeUser(user)
+}
+
 export async function changeUserPassword(userId, currentPassword, newPassword, confirmPassword) {
   if (newPassword !== confirmPassword) throw new Error('Mật khẩu nhập lại chưa khớp')
   await apiRequest('/auth/change-password', {
@@ -95,7 +108,7 @@ export async function requestPasswordReset(email) {
     method: 'POST',
     body: JSON.stringify({ email })
   })
-  return { email, resetToken: data.otp || data.resetToken, ...data }
+  return { email, devOtp: data.otp, devToken: data.resetToken, ...data }
 }
 
 export async function resetPasswordWithToken(email, token, newPassword, confirmPassword) {

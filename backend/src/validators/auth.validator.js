@@ -3,13 +3,17 @@ import { body } from 'express-validator'
 export const registerValidator = [
   body('name').notEmpty().withMessage('Name is required'),
   body('email').isEmail().withMessage('Valid email is required'),
-  body('phone').notEmpty().withMessage('Phone is required'),
+  body('phone')
+    .matches(/^(0|\+84)[0-9]{9,10}$/)
+    .withMessage('Valid phone is required'),
   body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
   body('role').isIn(['customer', 'seller']).withMessage('Role must be customer or seller')
 ]
 
 export const loginValidator = [
-  body('email').isEmail().withMessage('Valid email is required'),
+  body('email')
+    .notEmpty()
+    .withMessage('Email or phone is required'),
   body('password').notEmpty().withMessage('Password is required')
 ]
 

@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import SellerDashboardLayout from '../../layout/SellerDashboardLayout'
 import { useSeller } from '../../contexts/SellerContext'
 import { getSellerProductById, saveSellerProduct } from '../../services/sellerProduct.service'
+import { uploadImages } from '../../services/upload.service'
 
 function imagesToText(images = []) {
   return images.join(', ')
@@ -24,6 +25,7 @@ function SellerProductForm() {
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const [categories, setCategories] = useState([])
+  const [imageFiles, setImageFiles] = useState([])
 
   useEffect(() => {
     // Load categories from backend
@@ -62,6 +64,7 @@ function SellerProductForm() {
     setLoading(true)
     setMessage('')
     try {
+      const uploadedImages = imageFiles.length ? await uploadImages(imageFiles) : []
       const saved = await saveSellerProduct(seller, {
         _id: editingProduct?._id || editingProduct?.id,
         name: form.name,
@@ -70,7 +73,7 @@ function SellerProductForm() {
         description: form.description,
         price: Number(form.price),
         stock: Number(form.stock),
-        images: textToImages(form.imagesText),
+        images: [...textToImages(form.imagesText), ...uploadedImages],
       }, mode)
       setMessage(mode === 'publish' ? 'Sản phẩm đã chuyển sang chờ Admin duyệt.' : 'Đã lưu nháp sản phẩm.')
       setTimeout(() => navigate(`/seller/products/${saved._id || saved.id}`), 500)
@@ -96,6 +99,7 @@ function SellerProductForm() {
           <input className="seller-input" type="number" value={form.price} onChange={(e) => handleChange('price', e.target.value)} placeholder="Giá" />
           <input className="seller-input" type="number" value={form.stock} onChange={(e) => handleChange('stock', e.target.value)} placeholder="Tồn kho" />
           <textarea className="seller-textarea" value={form.imagesText} onChange={(e) => handleChange('imagesText', e.target.value)} placeholder="URL ảnh sản phẩm, cách nhau bằng dấu phẩy" />
+          <input className="seller-input" type="file" accept="image/*" multiple onChange={(e) => setImageFiles(Array.from(e.target.files || []))} />
         </div>
         {message ? <div className={message.includes('duyệt') || message.includes('Đã lưu') ? 'status-message text-success' : 'status-message text-danger'}>{message}</div> : null}
         <div className="seller-form-actions">
