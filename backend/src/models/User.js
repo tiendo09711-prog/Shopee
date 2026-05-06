@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
   status: { type: String, enum: USER_STATUSES, default: 'active' },
   failedLoginCount: { type: Number, default: 0 },
   lockedReason: { type: String, default: '' },
+  tokenVersion: { type: Number, default: 0 },
   lastLoginAt: Date,
   refreshTokens: { type: [refreshTokenSchema], select: false, default: [] }
 }, { timestamps: true })

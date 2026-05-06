@@ -1,4 +1,4 @@
-import { apiRequest } from './apiClient'
+import { apiRequest, resolveApiAssetUrl } from './apiClient'
 
 const HISTORY_KEY = 'shopee_clone_search_history'
 let productCache = []
@@ -27,7 +27,7 @@ function normalizeProduct(product = {}) {
     sold: Number(product.sold || 0),
     views: Number(product.views || product.sold || 0),
     stock: Number(product.stock || 0),
-    images: Array.isArray(product.images) ? product.images : [],
+    images: Array.isArray(product.images) ? product.images.map(resolveApiAssetUrl) : [],
     variations: product.variants || product.variations || [],
     discountPercent,
     shippingLeadTime: product.shippingLeadTime || '2-4 ngày',
@@ -87,7 +87,10 @@ export async function fetchProductBySlug(slug) {
 
 export async function fetchProductReviews(productIdOrSlug) {
   const data = await apiRequest(`/products/${productIdOrSlug}/reviews`)
-  return data.reviews || []
+  return (data.reviews || []).map((review) => ({
+    ...review,
+    images: Array.isArray(review.images) ? review.images.map(resolveApiAssetUrl) : []
+  }))
 }
 
 export async function fetchRelatedProducts(product, limit = 6) {

@@ -13,6 +13,9 @@ export const authRequired = asyncHandler(async (req, res, next) => {
   const user = await User.findById(payload.sub)
   if (!user) throw new ApiError(401, 'Invalid token')
   if (user.status !== 'active') throw new ApiError(403, 'Account is not active')
+  if (payload.tokenVersion !== undefined && Number(payload.tokenVersion) !== Number(user.tokenVersion || 0)) {
+    throw new ApiError(401, 'Token has been revoked')
+  }
 
   req.user = user
   next()

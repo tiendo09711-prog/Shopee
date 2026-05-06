@@ -6,12 +6,26 @@ import Category from '../models/Category.js'
 import Order from '../models/Order.js'
 import { updateOrderStatus } from './order.service.js'
 
+function isAdult(birthDate) {
+  const dob = new Date(birthDate)
+  if (Number.isNaN(dob.getTime())) return false
+
+  const today = new Date()
+  let age = today.getFullYear() - dob.getFullYear()
+  const monthDiff = today.getMonth() - dob.getMonth()
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age -= 1
+  return age >= 18
+}
+
 export async function registerShop(user, payload) {
   if (user.role !== 'seller') throw new ApiError(403, 'Seller account is required')
   const existed = await Seller.findOne({ user: user._id })
   if (existed) throw new ApiError(409, 'Seller shop already exists')
   if (!payload.shopName) throw new ApiError(400, 'Shop name is required')
   if (!payload.legalAccepted) throw new ApiError(400, 'Legal agreement is required')
+  if (!payload.sellerFullName) throw new ApiError(400, 'Seller full name is required')
+  if (!isAdult(payload.birthDate)) throw new ApiError(400, 'Seller must be at least 18 years old')
+  if (!payload.saleCategory?.name) throw new ApiError(400, 'Sale category is required')
 
   return Seller.create({
     user: user._id,
@@ -19,11 +33,15 @@ export async function registerShop(user, payload) {
     slug: slugify(payload.shopName),
     email: payload.email || user.email,
     phone: payload.phone || user.phone,
+    sellerFullName: payload.sellerFullName,
+    birthDate: payload.birthDate,
+    saleCategory: payload.saleCategory,
     pickupAddress: payload.pickupAddress,
     identityInfo: payload.identityInfo,
     taxInfo: payload.taxInfo,
     legalAccepted: true,
-    status: 'pending_approval'
+    status: 'approved',
+    approvedAt: new Date()
   })
 }
 
@@ -151,7 +169,7 @@ export async function changeOrderStatus(seller, user, orderId, nextStatus, note 
   return updateOrderStatus(user, orderId, nextStatus, note)
 }
 
-export async function getDashboard(sellerId, range = '30') {
+export async function getDashboard(sellerId, range = '30', query = {}) {
   const [products, allOrders] = await Promise.all([
     Product.find({ seller: sellerId }).lean(),
     Order.find({ seller: sellerId }).lean()
@@ -159,7 +177,14 @@ export async function getDashboard(sellerId, range = '30') {
 
   // Filter orders by range
   let orders = allOrders
-  if (range !== 'all') {
+  if (query.from || query.to) {
+    orders = allOrders.filter((o) => {
+      const created = new Date(o.createdAt).getTime()
+      const afterFrom = query.from ? created >= new Date(query.from).getTime() : true
+      const beforeTo = query.to ? created <= new Date(query.to).getTime() : true
+      return afterFrom && beforeTo
+    })
+  } else if (range !== 'all') {
     const days = Number(range) || 30
     const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
     orders = allOrders.filter((o) => new Date(o.createdAt) >= since)

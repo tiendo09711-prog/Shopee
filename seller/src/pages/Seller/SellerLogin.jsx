@@ -35,14 +35,10 @@ function SellerLogin() {
       }
 
       if (!sellerData) {
-        navigate('/seller/onboarding/welcome')
-      } else if (sellerData.status === 'pending_approval') {
-        navigate('/seller/onboarding/waiting')
-      } else if (sellerData.status === 'approved') {
+        navigate('/seller/register')
+      } else {
         setMessage(`Đăng nhập thành công: ${sellerData.shopName}`)
         setTimeout(() => navigate('/seller/dashboard'), 500)
-      } else {
-        navigate('/seller/onboarding/welcome')
       }
     } catch (err) {
       setError(err.message)

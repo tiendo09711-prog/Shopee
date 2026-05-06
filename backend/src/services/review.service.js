@@ -4,6 +4,13 @@ import Product from '../models/Product.js'
 import Review from '../models/Review.js'
 import Seller from '../models/Seller.js'
 
+const BLOCKED_WORDS = ['spam', 'lừa đảo', 'lua dao', 'chửi', 'tục tĩu']
+
+function containsBlockedContent(value = '') {
+  const normalized = String(value).toLowerCase()
+  return BLOCKED_WORDS.some((word) => normalized.includes(word))
+}
+
 async function recalculateProductRating(productId) {
   const stats = await Review.aggregate([
     { $match: { product: productId, status: 'visible' } },
@@ -45,6 +52,7 @@ export async function createReview(user, payload) {
 
   const numericRating = Number(rating)
   if (!numericRating || numericRating < 1 || numericRating > 5) throw new ApiError(400, 'Rating must be from 1 to 5')
+  if (containsBlockedContent(comment)) throw new ApiError(400, 'Review content contains blocked words')
 
   const review = await Review.create({
     order: order._id,

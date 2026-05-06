@@ -14,7 +14,7 @@ function ForgotPassword() {
     confirmPassword: ''
   })
   const [message, setMessage] = useState('')
-  const [resetToken, setResetToken] = useState('')
+  const [devOtp, setDevOtp] = useState('')
 
   const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
 
@@ -22,10 +22,10 @@ function ForgotPassword() {
     event.preventDefault()
     try {
       const result = await requestPasswordReset(form.email)
-      setResetToken(result.resetToken)
-      setForm((prev) => ({ ...prev, email: result.email, token: result.resetToken }))
+      setDevOtp(result.devOtp || '')
+      setForm((prev) => ({ ...prev, email: result.email, token: result.devOtp || '' }))
       setStep('reset')
-      setMessage(`OTP da duoc tao. Ma co hieu luc ${result.expiresInMinutes} phut.`)
+      setMessage(`OTP da duoc gui. Ma co hieu luc ${result.expiresInMinutes} phut.`)
     } catch (error) {
       setMessage(error.message)
     }
@@ -66,7 +66,7 @@ function ForgotPassword() {
             <h2>Đặt lại mật khẩu</h2>
             <input type="email" placeholder="Email" value={form.email} onChange={(e) => handleChange('email', e.target.value)} />
             <input type="text" placeholder="OTP/token" value={form.token} onChange={(e) => handleChange('token', e.target.value)} />
-            {resetToken ? <div className="auth-token-hint">OTP: <strong>{resetToken}</strong></div> : null}
+            {devOtp ? <div className="auth-token-hint">OTP dev: <strong>{devOtp}</strong></div> : null}
             <input type="password" placeholder="Mật khẩu mới" value={form.newPassword} onChange={(e) => handleChange('newPassword', e.target.value)} />
             <input type="password" placeholder="Nhập lại mật khẩu mới" value={form.confirmPassword} onChange={(e) => handleChange('confirmPassword', e.target.value)} />
             <button type="submit">ĐẶT LẠI MẬT KHẨU</button>

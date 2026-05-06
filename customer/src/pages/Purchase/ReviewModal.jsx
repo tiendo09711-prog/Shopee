@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { createReview, hasReviewedOrderItem } from '../../services/review.service'
+import { uploadImages } from '../../services/upload.service'
 
 function parseImages(value) {
   return value.split(',').map((item) => item.trim()).filter(Boolean)
@@ -15,14 +16,16 @@ function ReviewModal({ order, customer, onClose, onSuccess }) {
     video: '',
     anonymous: false
   })
+  const [files, setFiles] = useState([])
   const [message, setMessage] = useState('')
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     try {
+      const uploadedImages = files.length ? await uploadImages(files) : []
       const review = await createReview(order, form.orderItemId, customer, {
         ...form,
-        images: parseImages(form.images)
+        images: [...parseImages(form.images), ...uploadedImages]
       })
       onSuccess(review)
     } catch (error) {
@@ -46,6 +49,7 @@ function ReviewModal({ order, customer, onClose, onSuccess }) {
             </select>
             <textarea value={form.comment} onChange={(e) => setForm((prev) => ({ ...prev, comment: e.target.value }))} placeholder="Chia sẻ trải nghiệm của bạn" />
             <input value={form.images} onChange={(e) => setForm((prev) => ({ ...prev, images: e.target.value }))} placeholder="Ảnh, cách nhau bằng dấu phẩy" />
+            <input type="file" accept="image/*" multiple onChange={(e) => setFiles(Array.from(e.target.files || []))} />
             <input value={form.video} onChange={(e) => setForm((prev) => ({ ...prev, video: e.target.value }))} placeholder="Video URL (tuỳ chọn)" />
             <label className="purchase-modal-check">
               <input type="checkbox" checked={form.anonymous} onChange={(e) => setForm((prev) => ({ ...prev, anonymous: e.target.checked }))} />

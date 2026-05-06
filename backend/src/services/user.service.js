@@ -16,7 +16,20 @@ export async function updateProfile(userId, payload) {
   const user = await User.findById(userId)
   if (!user) throw new ApiError(404, 'User not found')
 
+  if (payload.email && payload.email !== user.email) {
+    const normalizedEmail = String(payload.email).toLowerCase().trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      throw new ApiError(400, 'Email is invalid', [{ field: 'email', message: 'Email is invalid' }])
+    }
+    const emailExists = await User.exists({ _id: { $ne: userId }, email: normalizedEmail })
+    if (emailExists) throw new ApiError(409, 'Email already exists', [{ field: 'email', message: 'Email already exists' }])
+    user.email = normalizedEmail
+  }
+
   if (payload.phone && payload.phone !== user.phone) {
+    if (!/^(0|\+84)[0-9]{9,10}$/.test(String(payload.phone).trim())) {
+      throw new ApiError(400, 'Phone is invalid', [{ field: 'phone', message: 'Phone is invalid' }])
+    }
     const phoneExists = await User.exists({ _id: { $ne: userId }, phone: payload.phone })
     if (phoneExists) throw new ApiError(409, 'Phone already exists', [{ field: 'phone', message: 'Phone already exists' }])
   }
@@ -45,5 +58,11 @@ export async function updateProfile(userId, payload) {
   }
 
   await user.save()
+  return sanitizeUser(user)
+}
+
+export async function updateAvatar(userId, avatarPath) {
+  const user = await User.findByIdAndUpdate(userId, { avatar: avatarPath }, { new: true })
+  if (!user) throw new ApiError(404, 'User not found')
   return sanitizeUser(user)
 }

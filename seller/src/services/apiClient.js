@@ -21,6 +21,12 @@ export function removeSellerSession() {
   localStorage.removeItem(SESSION_KEY)
 }
 
+export function resolveApiAssetUrl(value = '') {
+  if (!value || value.startsWith('http') || value.startsWith('data:')) return value
+  const origin = API_BASE_URL.replace(/\/api\/?$/, '')
+  return `${origin}${value.startsWith('/') ? value : `/${value}`}`
+}
+
 // Map MongoDB _id → id for compatibility with existing pages
 function normalizeDoc(doc) {
   if (!doc) return doc

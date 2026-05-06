@@ -2,12 +2,13 @@ import apiResponse from '../utils/apiResponse.js'
 import asyncHandler from '../utils/asyncHandler.js'
 import * as adminService from '../services/admin.service.js'
 
-export const dashboard = asyncHandler(async (req, res) => res.json(apiResponse(await adminService.dashboard(), 'Admin dashboard loaded')))
-export const listCategories = asyncHandler(async (req, res) => res.json(apiResponse(await adminService.listCategories(), 'Categories loaded')))
+export const dashboard = asyncHandler(async (req, res) => res.json(apiResponse(await adminService.dashboard(req.query), 'Admin dashboard loaded')))
+export const listCategories = asyncHandler(async (req, res) => res.json(apiResponse(await adminService.listCategories(req.query), 'Categories loaded')))
 export const createCategory = asyncHandler(async (req, res) => res.status(201).json(apiResponse(await adminService.createCategory(req.body), 'Category created')))
 export const updateCategory = asyncHandler(async (req, res) => res.json(apiResponse(await adminService.updateCategory(req.params.id, req.body), 'Category updated')))
 export const deleteCategory = asyncHandler(async (req, res) => res.json(apiResponse(await adminService.deleteCategory(req.params.id), 'Category deleted')))
 export const listProducts = asyncHandler(async (req, res) => res.json(apiResponse(await adminService.listProducts(req.query), 'Products loaded')))
+export const createProduct = asyncHandler(async (req, res) => res.status(201).json(apiResponse(await adminService.createProduct({ ...req.body, adminId: req.user._id }), 'Product created')))
 export const pendingProducts = asyncHandler(async (req, res) => res.json(apiResponse(await adminService.listProducts({ ...req.query, status: 'pending_review' }), 'Pending products loaded')))
 export const updateProduct = asyncHandler(async (req, res) => res.json(apiResponse(await adminService.updateProduct(req.params.id, req.body), 'Product updated')))
 export const approveProduct = asyncHandler(async (req, res) => res.json(apiResponse(await adminService.approveProduct(req.user, req.params.id), 'Product approved')))

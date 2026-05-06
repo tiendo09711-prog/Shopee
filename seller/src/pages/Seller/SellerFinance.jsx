@@ -11,6 +11,7 @@ const emptyStats = {
 function SellerFinance() {
   const { seller } = useSeller()
   const [range, setRange] = useState('30')
+  const [dates, setDates] = useState({ from: '', to: '' })
   const [stats, setStats] = useState(emptyStats)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -19,11 +20,11 @@ function SellerFinance() {
     if (!seller?.id && !seller?._id) return
     setLoading(true)
     setError('')
-    getSellerAnalytics(seller._id || seller.id, range)
+    getSellerAnalytics(seller._id || seller.id, range, dates)
       .then((data) => setStats({ ...emptyStats, ...data }))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [seller, range])
+  }, [seller, range, dates])
 
   const platformFee = Math.round((stats.revenue || 0) * 0.03)
   const profit = (stats.revenue || 0) - platformFee
@@ -64,6 +65,8 @@ function SellerFinance() {
               <option value="30">30 ngày</option>
               <option value="all">Tất cả</option>
             </select>
+            <input className="seller-input" type="date" value={dates.from} onChange={(e) => setDates((prev) => ({ ...prev, from: e.target.value }))} />
+            <input className="seller-input" type="date" value={dates.to} onChange={(e) => setDates((prev) => ({ ...prev, to: e.target.value }))} />
             <button type="button" className="seller-primary-btn" onClick={handleExport}>Export CSV</button>
           </div>
         </div>

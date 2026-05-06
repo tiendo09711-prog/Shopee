@@ -69,6 +69,6 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
 
 export const dashboard = asyncHandler(async (req, res) => {
   const range = req.query.range || '30'
-  const data = await sellerService.getDashboard(req.seller._id, range)
+  const data = await sellerService.getDashboard(req.seller._id, range, req.query)
   res.json(apiResponse(data, 'Seller dashboard loaded successfully'))
 })

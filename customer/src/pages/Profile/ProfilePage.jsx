@@ -6,9 +6,10 @@ import { useAuth } from '../../contexts/AuthContext'
 import './ProfilePage.css'
 
 function ProfilePage() {
-  const { user, isAuthenticated, updateProfile } = useAuth()
+  const { user, isAuthenticated, updateProfile, updateAvatar } = useAuth()
   const [form, setForm] = useState({
     name: user?.name || '',
+    email: user?.email || '',
     phone: user?.phone || '',
     address: user?.address || '',
     birthDay: user?.birthDay || '1',
@@ -18,20 +19,28 @@ function ProfilePage() {
     avatarThumb: user?.avatarThumb || ''
   })
 
-  if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: '/user/account' }} />
-
   const avatarPreview = useMemo(() => form.avatarThumb || form.avatar || '', [form])
   const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
+
+  if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: '/user/account' }} />
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      handleChange('avatar', reader.result)
-      handleChange('avatarThumb', reader.result)
+    if (!file.type.startsWith('image/')) {
+      alert('File avatar pháº£i lÃ  áº£nh.')
+      return
     }
-    reader.readAsDataURL(file)
+    if (file.size > 1024 * 1024) {
+      alert('Dung lÆ°á»£ng avatar tá»‘i Ä‘a 1 MB.')
+      return
+    }
+    updateAvatar(file)
+      .then((updatedUser) => {
+        handleChange('avatar', updatedUser.avatar || '')
+        handleChange('avatarThumb', updatedUser.avatarThumb || '')
+      })
+      .catch((error) => alert(error.message))
   }
 
   const handleSubmit = async (event) => {
@@ -53,7 +62,7 @@ function ProfilePage() {
           <p>Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
           <div className="profile-grid">
             <div className="profile-form-fields">
-              <div className="profile-row"><label>Email</label><span>{user.email}</span></div>
+              <div className="profile-row"><label>Email</label><input type="email" value={form.email} onChange={(e) => handleChange('email', e.target.value)} /></div>
               <div className="profile-row"><label>Họ Tên</label><input value={form.name} onChange={(e) => handleChange('name', e.target.value)} /></div>
               <div className="profile-row"><label>Số điện thoại</label><input value={form.phone} onChange={(e) => handleChange('phone', e.target.value)} /></div>
               <div className="profile-row"><label>Địa chỉ</label><input value={form.address} onChange={(e) => handleChange('address', e.target.value)} /></div>

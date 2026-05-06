@@ -3,8 +3,12 @@ import { apiRequest, formatCurrency } from './apiClient'
 export { formatCurrency }
 
 // Categories
-export async function getCategories() {
-  return apiRequest('/admin/categories')
+export async function getCategories(query = {}) {
+  const params = new URLSearchParams()
+  if (query.status) params.set('status', query.status)
+  if (query.keyword) params.set('keyword', query.keyword)
+  const qs = params.toString()
+  return apiRequest(`/admin/categories${qs ? `?${qs}` : ''}`)
 }
 
 export async function saveCategory(payload) {
@@ -55,6 +59,20 @@ export async function updateProductStatus(id, status) {
   return apiRequest(`/admin/products/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({ status }),
+  })
+}
+
+export async function saveProduct(payload) {
+  const id = payload.id || payload._id
+  if (id) {
+    return apiRequest(`/admin/products/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    })
+  }
+  return apiRequest('/admin/products', {
+    method: 'POST',
+    body: JSON.stringify(payload),
   })
 }
 
@@ -139,6 +157,12 @@ export async function getRefunds(query = {}) {
 }
 
 // Dashboard
-export async function getDashboard() {
-  return apiRequest('/admin/stats/dashboard')
+export async function getDashboard(query = {}) {
+  const params = new URLSearchParams()
+  if (query.range) params.set('range', query.range)
+  if (query.from) params.set('from', query.from)
+  if (query.to) params.set('to', query.to)
+  if (query.category) params.set('category', query.category)
+  const qs = params.toString()
+  return apiRequest(`/admin/stats/dashboard${qs ? `?${qs}` : ''}`)
 }

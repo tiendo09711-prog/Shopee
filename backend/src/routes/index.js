@@ -12,6 +12,7 @@ import refundRoutes from './refund.routes.js'
 import reportRoutes from './report.routes.js'
 import reviewRoutes from './review.routes.js'
 import sellerRoutes from './seller.routes.js'
+import uploadRoutes from './upload.routes.js'
 import userRoutes from './user.routes.js'
 
 const router = Router()
@@ -31,6 +32,7 @@ router.use('/refunds', refundRoutes)
 router.use('/reports', reportRoutes)
 router.use('/notifications', notificationRoutes)
 router.use('/chat', chatRoutes)
+router.use('/uploads', uploadRoutes)
 router.use('/', sellerRoutes)
 router.use('/admin', adminRoutes)
 
