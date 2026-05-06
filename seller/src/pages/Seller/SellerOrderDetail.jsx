@@ -23,7 +23,7 @@ function SellerOrderDetail() {
   }, [orderId, seller])
 
   if (loading) {
-    return <SellerDashboardLayout><div style={{ padding: 32 }}>Dang tai chi tiet don hang...</div></SellerDashboardLayout>
+    return <SellerDashboardLayout><div style={{ padding: 32 }}>Đang tải chi tiết đơn hàng...</div></SellerDashboardLayout>
   }
 
   if (error) {
@@ -31,7 +31,7 @@ function SellerOrderDetail() {
       <SellerDashboardLayout>
         <section className="seller-panel">
           <div className="status-message text-danger">{error}</div>
-          <Link to="/seller/orders" className="seller-primary-btn">Ve danh sach don</Link>
+          <Link to="/seller/orders" className="seller-primary-btn">Về danh sách đơn</Link>
         </section>
       </SellerDashboardLayout>
     )
@@ -44,20 +44,20 @@ function SellerOrderDetail() {
   return (
     <SellerDashboardLayout>
       <section className="seller-panel">
-        <h1 className="seller-page-title">Chi tiet don {order.orderCode || order._id || order.id}</h1>
+        <h1 className="seller-page-title">Chi tiết đơn {order.orderCode || order._id || order.id}</h1>
         <div className="seller-info-grid">
-          <div className="seller-info-card"><span>Khach hang</span><strong>{address.fullName || address.name || order.customer?.name}</strong><small>{address.phone || order.customer?.phone}</small></div>
-          <div className="seller-info-card"><span>Trang thai</span><strong>{ORDER_STATUS_LABELS[order.status] || order.status}</strong></div>
-          <div className="seller-info-card"><span>Thanh toan</span><strong>{order.paymentMethod}</strong><small>{order.paymentStatus}</small></div>
-          <div className="seller-info-card"><span>Van chuyen</span><strong>{order.shippingProvider || 'PShop Delivery'}</strong><small>{order.trackingCode || 'Chua co ma'}</small></div>
+          <div className="seller-info-card"><span>Khách hàng</span><strong>{address.fullName || address.name || order.customer?.name}</strong><small>{address.phone || order.customer?.phone}</small></div>
+          <div className="seller-info-card"><span>Trạng thái</span><strong>{ORDER_STATUS_LABELS[order.status] || order.status}</strong></div>
+          <div className="seller-info-card"><span>Thanh toán</span><strong>{order.paymentMethod}</strong><small>{order.paymentStatus}</small></div>
+          <div className="seller-info-card"><span>Vận chuyển</span><strong>{order.shippingProvider || 'PShop Delivery'}</strong><small>{order.trackingCode || 'Chưa có mã'}</small></div>
         </div>
         <div className="seller-info-card" style={{ marginTop: 16 }}>
-          <span>Dia chi nhan hang</span>
+          <span>Địa chỉ nhận hàng</span>
           <strong>{address.fullAddress || address.detail}</strong>
-          {order.cancelReason ? <small>Ly do huy: {order.cancelReason}</small> : null}
+          {order.cancelReason ? <small>Lý do hủy: {order.cancelReason}</small> : null}
         </div>
         <table className="seller-table" style={{ marginTop: 16 }}>
-          <thead><tr><th>San pham</th><th>Phan loai</th><th>So luong</th><th>Don gia</th><th>Tong</th></tr></thead>
+          <thead><tr><th>Sản phẩm</th><th>Phân loại</th><th>Số lượng</th><th>Đơn giá</th><th>Tổng</th></tr></thead>
           <tbody>
             {(order.items || []).map((item) => (
               <tr key={item._id || item.orderItemId || item.product}>
@@ -70,7 +70,7 @@ function SellerOrderDetail() {
             ))}
           </tbody>
         </table>
-        <div className="order-total-row total"><span>Tong thanh toan</span><strong>{formatCurrency(order.total || order.finalTotal)}</strong></div>
+        <div className="order-total-row total"><span>Tổng thanh toán</span><strong>{formatCurrency(order.total || order.finalTotal)}</strong></div>
       </section>
     </SellerDashboardLayout>
   )

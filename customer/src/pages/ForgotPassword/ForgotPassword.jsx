@@ -25,7 +25,7 @@ function ForgotPassword() {
       setDevOtp(result.devOtp || '')
       setForm((prev) => ({ ...prev, email: result.email, token: result.devOtp || '' }))
       setStep('reset')
-      setMessage(`OTP da duoc gui. Ma co hieu luc ${result.expiresInMinutes} phut.`)
+      setMessage(`OTP đã được gửi. Mã có hiệu lực ${result.expiresInMinutes} phút.`)
     } catch (error) {
       setMessage(error.message)
     }
@@ -35,14 +35,14 @@ function ForgotPassword() {
     event.preventDefault()
     try {
       await resetPassword(form.email, form.token, form.newPassword, form.confirmPassword)
-      setMessage('Dat lai mat khau thanh cong. Vui long dang nhap lai.')
+      setMessage('Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại.')
       setTimeout(() => navigate('/login'), 700)
     } catch (error) {
       setMessage(error.message)
     }
   }
 
-  const isSuccess = message.toLowerCase().includes('thanh cong') || message.toLowerCase().includes('otp')
+  const isSuccess = message.includes('thành công') || message.includes('OTP đã được gửi')
 
   return (
     <div className="auth-page">
